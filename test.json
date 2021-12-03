@@ -1,0 +1,96 @@
+{
+    "goal": "flag",
+    "character": {
+        "width": 20,
+        "height": 20
+    },
+    "spawn": {
+        "x": 300,
+        "y": 350
+    },
+    "objects": [
+        {
+            "type": 3,
+            "x": -500,
+            "y": 680,
+            "width": 2200,
+            "height": 20
+        },
+        {
+            "type": 1,
+            "x": 100,
+            "y": 400,
+            "width": 150,
+            "height": 50
+        },
+        {
+            "type": 5,
+            "x": 250,
+            "y": 400,
+            "width": 150,
+            "height": 50
+        },
+        {
+            "type": 6,
+            "x": 400,
+            "y": 400,
+            "width": 150,
+            "height": 50
+        },
+        {
+            "type": 2,
+            "x": 550,
+            "y": 400,
+            "width": 150,
+            "height": 50
+        },
+        {
+            "type": 7,
+            "x": 700,
+            "y": 400,
+            "width": 150,
+            "height": 50
+        },
+        {
+            "type": 0,
+            "x": 50,
+            "y": 200,
+            "width": 50,
+            "height": 250
+        },
+        {
+            "type": 0,
+            "x": 850,
+            "y": 400,
+            "width": 50,
+            "height": 50
+        },
+        {
+            "type": 9,
+            "x": 875,
+            "y": 375,
+            "width": 25,
+            "height": 25
+        }
+    ],
+    "decorations": [
+        {
+            "x": 290,
+            "y": 340,
+            "width": 40,
+            "height": 40,
+            "color": "#ccff3377"
+        }
+    ],
+    "texts": [
+        {
+            "x": 1190,
+            "y": 24,
+            "size": 24,
+            "font": "sans-serif",
+            "text": "Why Hello!",
+            "color": "black",
+            "align": "right"
+        }
+    ]
+}

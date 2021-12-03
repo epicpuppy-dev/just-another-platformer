@@ -1,0 +1,353 @@
+const canvas = document.getElementById("main");
+var loaded = false;
+G = {}
+G.level = 0
+G.playing = false;
+G.timer = 0;
+G.scene = "m";
+G.ctx = canvas.getContext("2d");
+G.ctx.fillStyle = "white";
+G.ctx.fillRect(0, 0, 800, 600);
+G.character = {};
+G.character.x = 0;
+G.character.y = 0;
+G.character.vx = 0;
+G.character.vy = 0;
+G.character.width = 0;
+G.character.height = 0;
+G.character.collider = {};
+G.character.collider.x = 0;
+G.character.collider.y = 0;
+G.character.collider.width = 0;
+G.character.collider.height = 0;
+G.jumps = 0;
+G.keys = {};
+G.keys.left = false;
+G.keys.right = false;
+G.objects = [];
+G.deco = [];
+G.texts = [];
+
+function Platform(x, y, width, height, type) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.type = type;
+}
+function Rect(x, y, width, height, color) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.color = color;
+}
+function GameText(x, y, size, font, text, color, align="left") {
+    this.x = x;
+    this.y = y;
+    this.font = size + "px " + font;
+    this.text = text;
+    this.color = color;
+    this.align = align;
+}
+async function FetchFile(file) {
+    let res = await fetch(file);
+    return await res.json();
+}
+function CollisionDirection(root, object) {
+    var root_bottom = root.y + root.height;
+    var object_bottom = object.y + object.height;
+    var root_right = root.x + root.width;
+    var object_right = object.x + object.width;
+
+    var b_collision = object_bottom - root.y;
+    var t_collision = root_bottom - object.y;
+    var l_collision = root_right - object.x;
+    var r_collision = object_right - root.x;
+
+    if (t_collision < b_collision && t_collision < l_collision && t_collision < r_collision )
+    {                           
+        return "t";
+    }
+    if (b_collision < t_collision && b_collision < l_collision && b_collision < r_collision)                        
+    {
+        return "b";
+    }
+    if (l_collision < r_collision && l_collision < t_collision && l_collision < b_collision)
+    {
+        return "l";
+    }
+    if (r_collision < l_collision && r_collision < t_collision && r_collision < b_collision )
+    {
+        return "r";
+    }
+    return null;
+}
+function IsCollision(root, object) {
+    var collision = false;
+    if (
+        root.x > object.x &&
+        root.x < object.x + object.width &&
+        root.y > object.y &&
+        root.y < object.y + object.height
+    ) {
+        collision = true;
+    } if (
+        root.x + root.width > object.x &&
+        root.x + root.width < object.x + object.width &&
+        root.y > object.y &&
+        root.y < object.y + object.height
+    ) {
+        collision = true;
+    } if (
+        root.x > object.x &&
+        root.x < object.x + object.width &&
+        root.y + root.height > object.y &&
+        root.y + root.height < object.y + object.height
+    ) {
+        collision = true;
+    } if (
+        root.x + root.width > object.x &&
+        root.x + root.width < object.x + object.width &&
+        root.y + root.height > object.y &&
+        root.y + root.height < object.y + object.height
+    ) {
+        collision = true;
+    }
+    return collision;
+}
+function LevelCollision(root) {
+    var collisions = [];
+    for (const object of G.objects) {
+        var collision = IsCollision(root, object);
+        if (collision) {
+            collisions.push(object);
+        }
+    }
+    return collisions;
+}
+function LoadLevel(levelid) {
+    G.character.vx = 0;
+    G.character.vy = 0;
+    console.log("LOADLEVEL: " + levelid);
+    G.leveldata = null
+    for (const pack of G.levels) {
+        for (const level of pack.levels) {
+            if (level.id != levelid) {
+                continue;
+            }
+            G.leveldata = level.level;
+        }
+    }
+    if (G.leveldata == null) {
+        return;
+    }
+    G.character.width = G.leveldata.character.width;
+    G.character.height = G.leveldata.character.height;
+    G.character.x = G.leveldata.spawn.x;
+    G.character.y = G.leveldata.spawn.y;
+    G.character.collider.width = G.leveldata.character.width;
+    G.character.collider.height = G.leveldata.character.height;
+    for (const object of G.leveldata.objects) {
+        G.objects.push(new Platform(object.x, object.y, object.width, object.height, object.type));
+    }
+    for (const deco of G.leveldata.decorations) {
+        G.deco.push(new Rect(deco.x, deco.y, deco.width, deco.height, deco.color));
+    }
+    for (const text of G.leveldata.texts) {
+        var align = "left"
+        if ("align" in text) {
+            align = text.align
+        }
+        G.texts.push(new GameText(text.x, text.y, text.size, text.font, text.text, text.color, align));
+    }
+    G.playing = true;
+}
+async function FetchLevels() {
+    let levels = await FetchFile("./levels.json");
+    G.levels = levels;
+    for (const pack of G.levels) {
+        console.log("LOADPACK: " + pack.id + ", " + pack.levels.length + " levels");
+        for (const level of pack.levels) {
+            if (level.gg == true) {
+                continue;
+            }
+            level.level = await FetchFile(level.file);
+        }
+    }
+    loaded = true;
+}
+FetchLevels();
+G.colors = ["#444444", "#888844", "#44aa44", "#ee2222", "#eeee44", "#aaaa44", "#cccc44", "#44aa88", "", "#44ff44"];
+function Draw() {
+    if (G.scene == "m") {
+        G.ctx.fillStyle = "#ffffff";
+        G.ctx.fillRect(0, 0, 1200, 700);
+        G.ctx.fillStyle = "black";
+        G.ctx.font = "60px sans-serif";
+        G.ctx.textAlign = "center";
+        G.ctx.textBaseline = "middle";
+        G.ctx.fillText("Just Another Platformer", 600, 250);
+        G.ctx.textBaseline = "bottom";
+        G.ctx.font = "20px sans-serif";
+        if (loaded) {
+            G.ctx.fillText("Press JUMP to start", 600, 698);
+        } else {
+            G.ctx.fillText("Loading...", 600, 698);
+        }
+    } if (G.scene == "g") {
+        G.ctx.fillStyle = "#ffffff";
+        G.ctx.fillRect(0, 0, 1200, 700);
+        G.ctx.fillStyle = "#000000";
+        G.ctx.font = "24px sans-serif";
+        G.ctx.textAlign = "left";
+        G.ctx.fillText("Time: " + G.timer, 10, 24);
+        G.ctx.fillStyle = "#000000";
+        G.ctx.fillRect(G.character.x, G.character.y, G.character.width, G.character.height);
+        for (const platform of G.objects) {
+            G.ctx.fillStyle = G.colors[platform.type];
+            G.ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+        }
+        for (const deco of G.deco) {
+            G.ctx.fillStyle = deco.color;
+            G.ctx.fillRect(deco.x, deco.y, deco.width, deco.height);
+        }
+        for (const text of G.texts) {
+            G.ctx.fillStyle = text.color;
+            G.ctx.font = text.font;
+            G.ctx.textAlign = text.align;
+            G.ctx.fillText(text.text, text.x, text.y);
+        }
+    } if (G.scene == "e") {
+        G.ctx.fillStyle = "#eeffee";
+        G.ctx.fillRect(0, 0, 1200, 700);
+        G.ctx.fillStyle = "black";
+        G.ctx.font = "60px sans-serif";
+        G.ctx.textAlign = "center";
+        G.ctx.textBaseline = "middle";
+        G.ctx.fillText("You Win!", 600, 350);
+        G.ctx.font = "30px sans-serif";
+        G.ctx.fillText("Your Time: " + G.timer + " seconds", 600, 400);
+        G.ctx.textBaseline = "bottom";
+        G.ctx.font = "20px sans-serif";
+        G.ctx.fillText("Press JUMP to continue", 600, 698);
+    }
+}
+document.addEventListener('keydown', function (event) {
+    if (G.scene == "m") {
+        if (event.keyCode == 32 && loaded) {
+            LoadLevel(G.levels[0].levels[G.level].id);
+            G.vy = 0;
+            G.vx = 0;
+            G.scene = "g";
+        }
+    }
+    if (event.keyCode == 37) {
+        G.keys.left = true;
+    }
+    else if (event.keyCode == 39) {
+        G.keys.right = true;
+    }
+    else if (event.keyCode == 32 && G.jumps > 0) {
+        G.character.vy = -6;
+        G.jumps -= 1;
+    }
+    else if (event.keyCode == 32 && G.scene == "e") {
+        G.scene = "m";
+        G.timer = 0;
+        G.level = 0;
+    }
+});
+document.addEventListener('keyup', function (event) {
+    if (event.keyCode == 37) {
+        G.keys.left = false;
+    }
+    else if (event.keyCode == 39) {
+        G.keys.right = false;
+    }
+});
+function Movement() {
+    if (G.keys.left && G.character.vx > -6) {
+        G.character.vx -= 0.4;
+    } if (G.keys.right && G.character.vx < 6) {
+        G.character.vx += 0.4;
+    }
+    if (G.character.vx < 0) {
+        G.character.vx = Math.min(G.character.vx + 0.2, 0);
+    } if (G.character.vx > 0) {
+        G.character.vx = Math.max(G.character.vx - 0.2, 0);
+    }
+}
+function Main() {
+    if (G.playing) {
+        G.timer = Math.round((G.timer + 0.02) * 100) / 100;
+    }
+    G.character.collider.x = G.character.x + G.character.vx;
+    G.character.collider.y = G.character.y + G.character.vy;
+    Movement();
+    var collisions = LevelCollision(G.character.collider)
+    if (collisions.length != 0) {
+        var collide = true;
+        for (const collision of collisions) {
+            G.jumps = 0;
+            if (collision.type == 3) {
+                G.character.x = G.leveldata.spawn.x;
+                G.character.y = G.leveldata.spawn.y;
+                G.character.vx = 0;
+                G.character.vy = 0;
+                collide = false;
+            } if (collision.type == 1) {
+                G.jumps = 1;
+            } if (collision.type == 5) {
+                G.jumps = 2;
+            } if (collision.type == 2 && G.character.vy > 2) {
+                G.character.vy = -G.character.vy*0.65;
+                collide = false;
+            } if (collision.type == 6) {
+                G.jumps = 3;
+            } if (collision.type == 9) {
+                G.level += 1;
+                G.objects = [];
+                G.deco = [];
+                G.texts = [];
+                G.character.vy = 0;
+                G.character.vx = 0;
+                if (G.levels[0].levels[G.level].gg == true) {
+                    G.playing = false;
+                    G.scene = "e";
+                } else {
+                    LoadLevel(G.levels[0].levels[G.level].id);
+                }
+                collide = false;
+            } if (collision.type == 7 && G.character.vy > 2) {
+                G.character.vy = -G.character.vy*0.65;
+                G.jumps = 1;
+                collide = false;
+            }
+            if (collide) {
+                direction = CollisionDirection(G.character.collider, collision);
+                if (direction == "t") {
+                    G.character.y = collision.y - G.character.height;
+                    G.character.vy = 0;
+                } if (direction == "b") {
+                    G.character.y = collision.y + collision.height;
+                    G.character.vy = 0;
+                } if (direction == "l") {
+                    G.character.x = collision.x - G.character.width;
+                    G.character.vx = 0;
+                } if (direction == "r") {
+                    G.character.x = collision.x + collision.width;
+                    G.character.vx = 0;
+                }
+            }
+        }
+        
+    }
+    G.character.x += G.character.vx;
+    G.character.y += G.character.vy;
+    G.character.vy += 0.25;
+    Draw();
+}
+const drawScreen = setInterval(function () {
+    Main()
+}, 20);
