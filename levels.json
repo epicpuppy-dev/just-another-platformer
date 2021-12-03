@@ -1,28 +1,7 @@
 [
     {
-        "name": "Test Pack",
-        "id": "test",
-        "req": [],
-        "levels": [
-            {
-                "name": "Test Level 1",
-                "id": "test",
-                "file": "./test.json"
-            },
-            {
-                "name": "Test Level 2",
-                "id": "test2",
-                "file": "./test2.json"
-            },
-            {
-                "gg": true
-            }
-        ]
-    },
-    {
         "name": "Tutorial Pack",
         "id": "tutorial",
-        "req": [],
         "levels": [
             
         ]

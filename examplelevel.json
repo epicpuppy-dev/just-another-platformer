@@ -1,0 +1,40 @@
+{
+    "goal": "flag",
+    "character": {
+        "width": 20,
+        "height": 20
+    },
+    "spawn": {
+        "x": 300,
+        "y": 300
+    },
+    "objects": [
+        {
+            "type": 3,
+            "x": -500,
+            "y": 680,
+            "width": 2200,
+            "height": 20
+        }
+    ],
+    "decorations": [
+        {
+            "x": 290,
+            "y": 290,
+            "width": 40,
+            "height": 40,
+            "color": "#ccff3377"
+        }
+    ],
+    "texts": [
+        {
+            "x": 1190,
+            "y": 24,
+            "size": 24,
+            "font": "sans-serif",
+            "text": "Why Hello!",
+            "color": "black",
+            "align": "right"
+        }
+    ]
+}
