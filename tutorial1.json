@@ -1,0 +1,72 @@
+{
+    "goal": "flag",
+    "character": {
+        "width": 20,
+        "height": 20
+    },
+    "spawn": {
+        "x": 300,
+        "y": 300
+    },
+    "objects": [
+        {
+            "type": 3,
+            "x": -500,
+            "y": 680,
+            "width": 2200,
+            "height": 20
+        },
+        {
+            "type": 0,
+            "x": 250,
+            "y": 400,
+            "width": 700,
+            "height": 50
+        },
+        {
+            "type": 9,
+            "x": 880,
+            "y": 360,
+            "width": 40,
+            "height": 40
+        }
+    ],
+    "decorations": [
+        {
+            "x": 295,
+            "y": 295,
+            "width": 30,
+            "height": 30,
+            "color": "#ccff3377"
+        }
+    ],
+    "texts": [
+        {
+            "x": 600,
+            "y": 200,
+            "size": 16,
+            "font": "'Press Start 2P', sans-serif",
+            "text": "Welcome to Just Another Platformer!",
+            "color": "black",
+            "align": "center"
+        },
+        {
+            "x": 600,
+            "y": 225,
+            "size": 16,
+            "font": "'Press Start 2P', sans-serif",
+            "text": "Use LEFT and RIGHT to move",
+            "color": "black",
+            "align": "center"
+        },
+        {
+            "x": 850,
+            "y": 350,
+            "size": 16,
+            "font": "'Press Start 2P', sans-serif",
+            "text": "Touch the goal to complete the level",
+            "color": "black",
+            "align": "center"
+        }
+    ]
+}

@@ -1,6 +1,7 @@
 const canvas = document.getElementById("main");
 var loaded = false;
 G = {}
+G.pack = 0;
 G.level = 0
 G.playing = false;
 G.timer = 0;
@@ -28,27 +29,33 @@ G.objects = [];
 G.deco = [];
 G.texts = [];
 
-function Platform(x, y, width, height, type) {
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-    this.type = type;
+class Platform {
+    constructor(x, y, width, height, type) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.type = type;
+    }
 }
-function Rect(x, y, width, height, color) {
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-    this.color = color;
+class Rect {
+    constructor(x, y, width, height, color) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.color = color;
+    }
 }
-function GameText(x, y, size, font, text, color, align="left") {
-    this.x = x;
-    this.y = y;
-    this.font = size + "px " + font;
-    this.text = text;
-    this.color = color;
-    this.align = align;
+class GameText {
+    constructor(x, y, size, font, text, color, align = "left") {
+        this.x = x;
+        this.y = y;
+        this.font = size + "px " + font;
+        this.text = text;
+        this.color = color;
+        this.align = align;
+    }
 }
 async function FetchFile(file) {
     let res = await fetch(file);
@@ -65,20 +72,16 @@ function CollisionDirection(root, object) {
     var l_collision = root_right - object.x;
     var r_collision = object_right - root.x;
 
-    if (t_collision < b_collision && t_collision < l_collision && t_collision < r_collision )
-    {                           
+    if (t_collision < b_collision && t_collision < l_collision && t_collision < r_collision) {
         return "t";
     }
-    if (b_collision < t_collision && b_collision < l_collision && b_collision < r_collision)                        
-    {
+    if (b_collision < t_collision && b_collision < l_collision && b_collision < r_collision) {
         return "b";
     }
-    if (l_collision < r_collision && l_collision < t_collision && l_collision < b_collision)
-    {
+    if (l_collision < r_collision && l_collision < t_collision && l_collision < b_collision) {
         return "l";
     }
-    if (r_collision < l_collision && r_collision < t_collision && r_collision < b_collision )
-    {
+    if (r_collision < l_collision && r_collision < t_collision && r_collision < b_collision) {
         return "r";
     }
     return null;
@@ -130,7 +133,7 @@ function LoadLevel(levelid) {
     G.character.vx = 0;
     G.character.vy = 0;
     console.log("LOADLEVEL: " + levelid);
-    G.leveldata = null
+    G.leveldata = null;
     for (const pack of G.levels) {
         for (const level of pack.levels) {
             if (level.id != levelid) {
@@ -178,18 +181,29 @@ async function FetchLevels() {
     loaded = true;
 }
 FetchLevels();
-G.colors = ["#444444", "#888844", "#44aa44", "#ee2222", "#eeee44", "#aaaa44", "#cccc44", "#44aa88", "", "#44ff44"];
+G.colors = [
+    "#444444", //0: Normal
+    "#666644", //1: Jump
+    "#44aa44", //2: Bounce
+    "#ee2222", //3: Lava
+    "#eeee44", //4: Bounce Pad
+    "#aaaa44", //5: Double Jump
+    "#eeee44", //6: Triple Jump
+    "#44aa88", //7: Jump Bounce Pad
+    "", //8: None
+    "#44ff44" //9: Goal
+];
 function Draw() {
     if (G.scene == "m") {
         G.ctx.fillStyle = "#ffffff";
         G.ctx.fillRect(0, 0, 1200, 700);
         G.ctx.fillStyle = "black";
-        G.ctx.font = "60px sans-serif";
+        G.ctx.font = "40px 'Press Start 2P', sans-serif";
         G.ctx.textAlign = "center";
         G.ctx.textBaseline = "middle";
-        G.ctx.fillText("Just Another Platformer", 600, 250);
+        G.ctx.fillText("Just Another Platformer", 600, 200);
         G.ctx.textBaseline = "bottom";
-        G.ctx.font = "20px sans-serif";
+        G.ctx.font = "24px 'Press Start 2P', sans-serif";
         if (loaded) {
             G.ctx.fillText("Press JUMP to start", 600, 698);
         } else {
@@ -199,7 +213,7 @@ function Draw() {
         G.ctx.fillStyle = "#ffffff";
         G.ctx.fillRect(0, 0, 1200, 700);
         G.ctx.fillStyle = "#000000";
-        G.ctx.font = "24px sans-serif";
+        G.ctx.font = "24px 'Press Start 2P', sans-serif";
         G.ctx.textAlign = "left";
         G.ctx.fillText("Time: " + G.timer, 10, 34);
         G.ctx.fillStyle = "#000000";
@@ -222,14 +236,14 @@ function Draw() {
         G.ctx.fillStyle = "#eeffee";
         G.ctx.fillRect(0, 0, 1200, 700);
         G.ctx.fillStyle = "black";
-        G.ctx.font = "60px sans-serif";
+        G.ctx.font = "40px 'Press Start 2P', sans-serif";
         G.ctx.textAlign = "center";
         G.ctx.textBaseline = "middle";
         G.ctx.fillText("You Win!", 600, 350);
-        G.ctx.font = "30px sans-serif";
+        G.ctx.font = "32px 'Press Start 2P', sans-serif";
         G.ctx.fillText("Your Time: " + G.timer + " seconds", 600, 400);
         G.ctx.textBaseline = "bottom";
-        G.ctx.font = "20px sans-serif";
+        G.ctx.font = "24px 'Press Start 2P', sans-serif";
         G.ctx.fillText("Press JUMP to continue", 600, 698);
     }
 }
@@ -301,7 +315,7 @@ function Main() {
             } if (collision.type == 5) {
                 G.jumps = 2;
             } if (collision.type == 2 && G.character.vy > 2) {
-                G.character.vy = -G.character.vy*0.65;
+                G.character.vy = -G.character.vy * 0.65;
                 collide = false;
             } if (collision.type == 6) {
                 G.jumps = 3;
@@ -320,7 +334,7 @@ function Main() {
                 }
                 collide = false;
             } if (collision.type == 7 && G.character.vy > 2) {
-                G.character.vy = -G.character.vy*0.65;
+                G.character.vy = -G.character.vy * 0.65;
                 G.jumps = 1;
                 collide = false;
             }
@@ -341,7 +355,7 @@ function Main() {
                 }
             }
         }
-        
+
     }
     G.character.x += G.character.vx;
     G.character.y += G.character.vy;

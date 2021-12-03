@@ -3,7 +3,29 @@
         "name": "Tutorial Pack",
         "id": "tutorial",
         "levels": [
-            
+            {
+                "name": "Introduction",
+                "id": "tutorial1",
+                "file": "./tutorial1.json"
+            },
+            {
+                "name": "Jumping Exists",
+                "id": "tutorial2",
+                "file": "./tutorial2.json"
+            },
+            {
+                "name": "Jump Twice",
+                "id": "tutorial3",
+                "file": "./tutorial3.json"
+            },
+            {
+                "name": "Jump Thrice",
+                "id": "tutorial4",
+                "file": "./tutorial4.json"
+            },
+            {
+                "gg": true
+            }
         ]
     }
 ]
