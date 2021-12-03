@@ -4,4 +4,8 @@ html {
 }
 canvas {
     border: 2px solid gray;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }

@@ -201,7 +201,7 @@ function Draw() {
         G.ctx.fillStyle = "#000000";
         G.ctx.font = "24px sans-serif";
         G.ctx.textAlign = "left";
-        G.ctx.fillText("Time: " + G.timer, 10, 24);
+        G.ctx.fillText("Time: " + G.timer, 10, 34);
         G.ctx.fillStyle = "#000000";
         G.ctx.fillRect(G.character.x, G.character.y, G.character.width, G.character.height);
         for (const platform of G.objects) {
