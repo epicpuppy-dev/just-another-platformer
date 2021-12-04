@@ -356,7 +356,7 @@ function Movement() {
 }
 function Main() {
     if (G.playing) {
-        G.timer = (G.timer + 0.02).toFixed(2);
+        G.timer = parseFloat(G.timer + 0.02).toFixed(2);
     }
     G.character.collider.x = G.character.x + G.character.vx;
     G.character.collider.y = G.character.y + G.character.vy;
