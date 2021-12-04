@@ -399,7 +399,7 @@ function Main() {
                         G.record = true;
                         window.localStorage.setItem("bestTimes", JSON.stringify(G.bestTimes));
                     } else {
-                        if (G.timer < G.bestTimes[G.pack]) {
+                        if (G.timer < G.bestTimes[G.pack].id) {
                             G.bestTimes[G.levels[G.pack].id] = G.timer;
                             G.record = true;
                             window.localStorage.setItem("bestTimes", JSON.stringify(G.bestTimes));
