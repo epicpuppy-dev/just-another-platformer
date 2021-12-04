@@ -9,8 +9,13 @@ const jumpSounds = [jumpSoundA, jumpSoundB, jumpSoundC];
 var jumpsound = 0;
 var loaded = false;
 G = {}
+G.bestTimes = JSON.parse(window.localStorage.getItem("bestTimes"));
+if (G.bestTimes == null) {
+    G.bestTimes = {};
+}
+G.record = false;
 G.pack = 0;
-G.level = 0
+G.level = 0;
 G.playing = false;
 G.timer = 0;
 G.scene = "m";
@@ -201,6 +206,13 @@ G.colors = [
     "", //8: None
     "#44ff44" //9: Goal
 ];
+G.difficultyColors = [
+    "#44dddd", //0
+    "#44dd44", //1
+    "#dddd44", //2
+    "#ee8844", //3
+    "#dd4444", //4
+]
 function Draw() {
     if (G.scene == "m") {
         G.ctx.fillStyle = "#ffffff";
@@ -214,6 +226,24 @@ function Draw() {
         G.ctx.font = "24px 'Press Start 2P', sans-serif";
         if (loaded) {
             G.ctx.fillText("Press JUMP to start", 600, 698);
+            G.ctx.textBaseline = "middle";
+            G.ctx.font = "32px 'Press Start 2P', sans-serif";
+            G.ctx.fillText("< " + G.levels[G.pack].name + " >", 600, 350);
+            G.ctx.font = "24px 'Press Start 2P', sans-serif";
+            G.ctx.fillText((G.levels[G.pack].levels.length - 1) + " levels", 600, 400);
+            G.ctx.textAlign = "right";
+            G.ctx.fillText("Difficulty: ", 600, 450);
+            G.ctx.fillText("Best Time: ", 600, 500);
+            var difficulty = "[" + "X".repeat(G.levels[G.pack].difficulty + 1) + " ".repeat(4 - G.levels[G.pack].difficulty) + "]";
+            G.ctx.fillStyle = G.difficultyColors[G.levels[G.pack].difficulty];
+            G.ctx.textAlign = "left";
+            G.ctx.fillText(difficulty, 600, 450);
+            G.ctx.fillStyle = "black";
+            if (G.bestTimes[G.levels[G.pack].id] == undefined) {
+                G.ctx.fillText("N/A", 600, 500);
+            } else{
+                G.ctx.fillText(G.bestTimes[G.levels[G.pack].id].toFixed(2) + "s", 600, 500);
+            }
         } else {
             G.ctx.fillText("Loading...", 600, 698);
         }
@@ -253,24 +283,42 @@ function Draw() {
         G.ctx.textBaseline = "bottom";
         G.ctx.font = "24px 'Press Start 2P', sans-serif";
         G.ctx.fillText("Press JUMP to continue", 600, 698);
+        if (G.record) {
+            G.ctx.fillStyle = "gold";
+            G.ctx.fillText("New Record!", 600, 450);
+        }
     }
 }
 document.addEventListener('keydown', function (event) {
-    if (G.scene == "m") {
-        if (event.keyCode == 32 && loaded) {
-            LoadLevel(G.levels[0].levels[G.level].id);
+    if (G.scene == "m" && loaded) {
+        if (event.code == "Space") {
+            LoadLevel(G.levels[G.pack].levels[G.level].id);
             G.vy = 0;
             G.vx = 0;
             G.scene = "g";
         }
+        if (event.code == "ArrowRight") {
+            if (G.pack < G.levels.length - 1) {
+                G.pack++;
+            } else {
+                G.pack = 0;
+            }
+        }
+        if (event.code == "ArrowLeft") {
+            if (G.pack > 0) {
+                G.pack--;
+            } else {
+                G.pack = G.levels.length - 1;
+            }
+        }
     }
-    if (event.keyCode == 37) {
+    if (event.code == "ArrowLeft") {
         G.keys.left = true;
     }
-    else if (event.keyCode == 39) {
+    else if (event.code == "ArrowRight") {
         G.keys.right = true;
     }
-    else if (event.keyCode == 32 && G.jumps > 0) {
+    else if (event.code == "Space" && G.jumps > 0) {
         jumpsound += 1;
         if (jumpsound > 2) {
             jumpsound = 0;
@@ -279,17 +327,18 @@ document.addEventListener('keydown', function (event) {
         G.character.vy = -6;
         G.jumps -= 1;
     }
-    else if (event.keyCode == 32 && G.scene == "e") {
+    else if (event.code == "Space" && G.scene == "e") {
         G.scene = "m";
         G.timer = 0;
         G.level = 0;
+        G.record = false;
     }
 });
 document.addEventListener('keyup', function (event) {
-    if (event.keyCode == 37) {
+    if (event.code == "ArrowLeft") {
         G.keys.left = false;
     }
-    else if (event.keyCode == 39) {
+    else if (event.code == "ArrowRight") {
         G.keys.right = false;
     }
 });
@@ -342,11 +391,22 @@ function Main() {
                 G.texts = [];
                 G.character.vy = 0;
                 G.character.vx = 0;
-                if (G.levels[0].levels[G.level].gg == true) {
+                if (G.levels[G.pack].levels[G.level].gg == true) {
                     G.playing = false;
                     G.scene = "e";
+                    if (G.bestTimes[G.pack] == undefined) {
+                        G.bestTimes[G.pack] = G.timer;
+                        G.record = true;
+                        window.localStorage.setItem("bestTimes", JSON.stringify(G.bestTimes));
+                    } else {
+                        if (G.timer < G.bestTimes[G.pack]) {
+                            G.bestTimes[G.pack] = G.timer;
+                            G.record = true;
+                            window.localStorage.setItem("bestTimes", JSON.stringify(G.bestTimes));
+                        }
+                    }  
                 } else {
-                    LoadLevel(G.levels[0].levels[G.level].id);
+                    LoadLevel(G.levels[G.pack].levels[G.level].id);
                 }
                 collide = false;
             } if (collision.type == 7 && G.character.vy > 2) {
@@ -372,7 +432,6 @@ function Main() {
                 }
             }
         }
-
     }
     G.character.x += G.character.vx;
     G.character.y += G.character.vy;

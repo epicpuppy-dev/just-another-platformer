@@ -1,37 +1,43 @@
 [
     {
-        "name": "Tutorial Pack",
+        "name": "Tutorial",
         "id": "tutorial",
+        "difficulty": 0,
         "levels": [
             {
                 "name": "Introduction",
                 "id": "tutorial1",
-                "file": "./tutorial1.json"
+                "file": "levels/tutorial1.json"
             },
             {
                 "name": "Jumping Exists",
                 "id": "tutorial2",
-                "file": "./tutorial2.json"
+                "file": "levels/tutorial2.json"
             },
             {
                 "name": "Jump Twice",
                 "id": "tutorial3",
-                "file": "./tutorial3.json"
+                "file": "levels/tutorial3.json"
             },
             {
                 "name": "Jump Thrice",
                 "id": "tutorial4",
-                "file": "./tutorial4.json"
+                "file": "levels/tutorial4.json"
             },
             {
                 "name": "Bouncy Blocks",
                 "id": "tutorial5",
-                "file": "./tutorial5.json"
+                "file": "levels/tutorial5.json"
             },
             {
                 "name": "Bounce Jump Mania",
                 "id": "tutorial6",
-                "file": "./tutorial6.json"
+                "file": "levels/tutorial6.json"
+            },
+            {
+                "name": "Putting it All Together",
+                "id": "tutorial7",
+                "file": "levels/tutorial7.json"
             },
             {
                 "gg": true
