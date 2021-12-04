@@ -394,8 +394,8 @@ function Main() {
                 if (G.levels[G.pack].levels[G.level].gg == true) {
                     G.playing = false;
                     G.scene = "e";
-                    if (G.bestTimes[G.pack] == undefined) {
-                        G.bestTimes[G.pack] = G.timer;
+                    if (G.bestTimes[G.levels[G.pack].id] == undefined) {
+                        G.bestTimes[G.levels[G.pack].id] = G.timer;
                         G.record = true;
                         window.localStorage.setItem("bestTimes", JSON.stringify(G.bestTimes));
                     } else {
