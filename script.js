@@ -356,7 +356,7 @@ function Movement() {
 }
 function Main() {
     if (G.playing) {
-        G.timer = Math.round((G.timer + 0.02) * 100) / 100;
+        G.timer = (G.timer + 0.02).toFixed(2);
     }
     G.character.collider.x = G.character.x + G.character.vx;
     G.character.collider.y = G.character.y + G.character.vy;
@@ -399,7 +399,7 @@ function Main() {
                         G.record = true;
                         window.localStorage.setItem("bestTimes", JSON.stringify(G.bestTimes));
                     } else {
-                        if (G.timer < G.bestTimes[G.pack].id) {
+                        if (G.timer < G.bestTimes[[G.pack].id]) {
                             G.bestTimes[G.levels[G.pack].id] = G.timer;
                             G.record = true;
                             window.localStorage.setItem("bestTimes", JSON.stringify(G.bestTimes));
