@@ -253,7 +253,7 @@ function Draw() {
         G.ctx.fillStyle = "#000000";
         G.ctx.font = "24px 'Press Start 2P', sans-serif";
         G.ctx.textAlign = "left";
-        G.ctx.fillText("Time: " + G.timer, 10, 34);
+        G.ctx.fillText("Time: " + G.timer.toFixed(2), 10, 34);
         G.ctx.fillStyle = "#000000";
         G.ctx.fillRect(G.character.x, G.character.y, G.character.width, G.character.height);
         for (const platform of G.objects) {
@@ -279,7 +279,7 @@ function Draw() {
         G.ctx.textBaseline = "middle";
         G.ctx.fillText("You Win!", 600, 350);
         G.ctx.font = "32px 'Press Start 2P', sans-serif";
-        G.ctx.fillText("Your Time: " + G.timer + " seconds", 600, 400);
+        G.ctx.fillText("Your Time: " + G.timer.toFixed(2) + " seconds", 600, 400);
         G.ctx.textBaseline = "bottom";
         G.ctx.font = "24px 'Press Start 2P', sans-serif";
         G.ctx.fillText("Press JUMP to continue", 600, 698);
@@ -356,7 +356,7 @@ function Movement() {
 }
 function Main() {
     if (G.playing) {
-        G.timer = parseFloat(G.timer + 0.02).toFixed(2);
+        G.timer = parseFloat((G.timer + 0.02).toFixed(2));
     }
     G.character.collider.x = G.character.x + G.character.vx;
     G.character.collider.y = G.character.y + G.character.vy;
@@ -399,7 +399,7 @@ function Main() {
                         G.record = true;
                         window.localStorage.setItem("bestTimes", JSON.stringify(G.bestTimes));
                     } else {
-                        if (G.timer < G.bestTimes[[G.pack].id]) {
+                        if (G.timer < G.bestTimes[G.levels[G.pack].id]) {
                             G.bestTimes[G.levels[G.pack].id] = G.timer;
                             G.record = true;
                             window.localStorage.setItem("bestTimes", JSON.stringify(G.bestTimes));
