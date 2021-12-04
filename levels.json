@@ -24,6 +24,16 @@
                 "file": "./tutorial4.json"
             },
             {
+                "name": "Bouncy Blocks",
+                "id": "tutorial5",
+                "file": "./tutorial5.json"
+            },
+            {
+                "name": "Bounce Jump Mania",
+                "id": "tutorial6",
+                "file": "./tutorial6.json"
+            },
+            {
                 "gg": true
             }
         ]

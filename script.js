@@ -1,4 +1,12 @@
 const canvas = document.getElementById("main");
+const winSound = new Audio("sounds/win.wav");
+const jumpSoundA = new Audio("sounds/jump.wav");
+const jumpSoundB = new Audio("sounds/jump.wav");
+const jumpSoundC = new Audio("sounds/jump.wav");
+const bounceSound = new Audio("sounds/bounce.wav");
+const dieSound = new Audio("sounds/die.wav");
+const jumpSounds = [jumpSoundA, jumpSoundB, jumpSoundC];
+var jumpsound = 0;
 var loaded = false;
 G = {}
 G.pack = 0;
@@ -189,7 +197,7 @@ G.colors = [
     "#eeee44", //4: Bounce Pad
     "#aaaa44", //5: Double Jump
     "#eeee44", //6: Triple Jump
-    "#44aa88", //7: Jump Bounce Pad
+    "#88aa44", //7: Jump Bounce Pad
     "", //8: None
     "#44ff44" //9: Goal
 ];
@@ -263,6 +271,11 @@ document.addEventListener('keydown', function (event) {
         G.keys.right = true;
     }
     else if (event.keyCode == 32 && G.jumps > 0) {
+        jumpsound += 1;
+        if (jumpsound > 2) {
+            jumpsound = 0;
+        }
+        jumpSounds[jumpsound].play();
         G.character.vy = -6;
         G.jumps -= 1;
     }
@@ -305,6 +318,7 @@ function Main() {
         for (const collision of collisions) {
             G.jumps = 0;
             if (collision.type == 3) {
+                dieSound.play();
                 G.character.x = G.leveldata.spawn.x;
                 G.character.y = G.leveldata.spawn.y;
                 G.character.vx = 0;
@@ -315,11 +329,13 @@ function Main() {
             } if (collision.type == 5) {
                 G.jumps = 2;
             } if (collision.type == 2 && G.character.vy > 2) {
+                bounceSound.play();
                 G.character.vy = -G.character.vy * 0.65;
                 collide = false;
             } if (collision.type == 6) {
                 G.jumps = 3;
             } if (collision.type == 9) {
+                winSound.play();
                 G.level += 1;
                 G.objects = [];
                 G.deco = [];
@@ -334,6 +350,7 @@ function Main() {
                 }
                 collide = false;
             } if (collision.type == 7 && G.character.vy > 2) {
+                bounceSound.play();
                 G.character.vy = -G.character.vy * 0.65;
                 G.jumps = 1;
                 collide = false;

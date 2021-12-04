@@ -5,8 +5,8 @@
         "height": 20
     },
     "spawn": {
-        "x": 300,
-        "y": 300
+        "x": 200,
+        "y": 120
     },
     "objects": [
         {
@@ -18,30 +18,30 @@
         },
         {
             "type": 0,
-            "x": 250,
-            "y": 400,
-            "width": 400,
+            "x": 150,
+            "y": 200,
+            "width": 200,
             "height": 50
         },
         {
-            "type": 6,
-            "x": 650,
-            "y": 400,
+            "type": 7,
+            "x": 450,
+            "y": 500,
             "width": 300,
             "height": 50
         },
         {
             "type": 9,
-            "x": 880,
-            "y": 180,
-            "width": 40,
+            "x": 820,
+            "y": 250,
+            "width": 160,
             "height": 40
         }
     ],
     "decorations": [
         {
-            "x": 295,
-            "y": 295,
+            "x": 195,
+            "y": 105,
             "width": 30,
             "height": 30,
             "color": "#ccff3377"
@@ -50,10 +50,10 @@
     "texts": [
         {
             "x": 600,
-            "y": 200,
+            "y": 100,
             "size": 16,
             "font": "'Press Start 2P', sans-serif",
-            "text": "This one is a triple jump",
+            "text": "Lime green blocks let you jump after bouncing off of them.",
             "color": "black",
             "align": "center"
         }
