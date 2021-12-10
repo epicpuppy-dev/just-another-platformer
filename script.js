@@ -377,7 +377,7 @@ function Main() {
                 G.jumps = 1;
             } if (collision.type == 5) {
                 G.jumps = 2;
-            } if (collision.type == 2 && G.character.vy > 2 && CollisionDirection(G.character.collider, collision) == "b") {
+            } if (collision.type == 2 && G.character.vy > 2 && CollisionDirection(G.character.collider, collision) == "t") {
                 bounceSound.play();
                 G.character.vy = -G.character.vy * 0.65;
                 collide = false;
@@ -409,7 +409,7 @@ function Main() {
                     LoadLevel(G.levels[G.pack].levels[G.level].id);
                 }
                 collide = false;
-            } if (collision.type == 7 && G.character.vy > 2 && CollisionDirection(G.character.collider, collision) == "b") {
+            } if (collision.type == 7 && G.character.vy > 2 && CollisionDirection(G.character.collider, collision) == "t") {
                 bounceSound.play();
                 G.character.vy = -G.character.vy * 0.65;
                 G.jumps = 1;
