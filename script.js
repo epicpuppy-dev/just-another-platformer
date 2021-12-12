@@ -1,4 +1,4 @@
-    const canvas = document.getElementById("main");
+const canvas = document.getElementById("main");
 const winSound = new Audio("sounds/win.wav");
 const jumpSoundA = new Audio("sounds/jump.wav");
 const jumpSoundB = new Audio("sounds/jump.wav");
@@ -74,8 +74,13 @@ class GameText {
     }
 }
 async function FetchFile(file) {
+    try {
     let res = await fetch(file);
     return await res.json();
+    } catch (err) {
+        console.log(err.stack);
+        console.log("ERROR FROM FetchFile");
+    }
 }
 function CollisionDirection(root, object) {
     var root_bottom = root.y + root.height;
@@ -183,18 +188,28 @@ function LoadLevel(levelid) {
     G.playing = true;
 }
 async function FetchLevels() {
+    try {
     let levels = await FetchFile("./levels.json?r=" + Math.random());
     G.levels = levels;
     for (const pack of G.levels) {
         console.log("LOADPACK: " + pack.id + ", " + pack.levels.length + " levels");
         for (const level of pack.levels) {
+            try {
             if (level.gg == true) {
                 continue;
             }
             level.level = await FetchFile(level.file + "?r=" + Math.random());
+            } catch (err) {
+                console.log(err.stack);
+                console.log("ERROR FROM FetchLevels: load level")
+            }
         }
     }
     loaded = true;
+    } catch (err) {
+        console.log(err.stack);
+        console.log("ERROR FROM FetchLevels");
+    }
 }
 FetchLevels();
 G.colors = [
@@ -228,7 +243,7 @@ function Draw() {
         G.ctx.textBaseline = "bottom";
         G.ctx.font = "24px 'Press Start 2P', sans-serif";
         G.ctx.textAlign = "right";
-        G.ctx.fillText("Ver. 0.1.2", 1190, 698);
+        G.ctx.fillText("Ver. 0.2.0", 1190, 698);
         G.ctx.textAlign = "center";
         if (loaded) {
             G.ctx.fillText("Press JUMP to start", 600, 698);

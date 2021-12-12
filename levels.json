@@ -7,41 +7,56 @@
             {
                 "name": "Introduction",
                 "id": "tutorial1",
-                "file": "levels/tutorial1.json"
+                "file": "levels/tutorial/1.json"
             },
             {
                 "name": "Jumping Exists",
                 "id": "tutorial2",
-                "file": "levels/tutorial2.json"
+                "file": "levels/tutorial/2.json"
             },
             {
                 "name": "Jump Twice",
                 "id": "tutorial3",
-                "file": "levels/tutorial3.json"
+                "file": "levels/tutorial/3.json"
             },
             {
                 "name": "Jump Thrice",
                 "id": "tutorial4",
-                "file": "levels/tutorial4.json"
+                "file": "levels/tutorial/4.json"
             },
             {
                 "name": "Bouncy Blocks",
                 "id": "tutorial5",
-                "file": "levels/tutorial5.json"
+                "file": "levels/tutorial/5.json"
             },
             {
                 "name": "Bounce Jump Mania",
                 "id": "tutorial6",
-                "file": "levels/tutorial6.json"
+                "file": "levels/tutorial/6.json"
             },
             {
                 "name": "Putting it All Together",
                 "id": "tutorial7",
-                "file": "levels/tutorial7.json"
+                "file": "levels/tutorial/7.json"
             },
             {
                 "gg": true
             }
+        ]
+    },
+    {
+        "name": "The First Trials",
+        "id": "first",
+        "difficulty": 1,
+        "levels": [
+            {
+                "name": "The First Trial",
+                "id": "first1",
+                "file": "levels/first/1.json"
+            },
+            {
+                "gg": true
+            }   
         ]
     }
 ]
