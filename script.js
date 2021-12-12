@@ -22,6 +22,9 @@ G.scene = "m";
 G.ctx = canvas.getContext("2d");
 G.ctx.fillStyle = "white";
 G.ctx.fillRect(0, 0, 800, 600);
+G.offset = {};
+G.offset.x = 0;
+G.offset.y = 0;
 G.character = {};
 G.character.x = 0;
 G.character.y = 0;
@@ -224,6 +227,9 @@ function Draw() {
         G.ctx.fillText("Just Another Platformer", 600, 200);
         G.ctx.textBaseline = "bottom";
         G.ctx.font = "24px 'Press Start 2P', sans-serif";
+        G.ctx.textAlign = "right";
+        G.ctx.fillText("Ver. 0.1.0", 1190, 698);
+        G.ctx.textAlign = "center";
         if (loaded) {
             G.ctx.fillText("Press JUMP to start", 600, 698);
             G.ctx.textBaseline = "middle";
@@ -251,25 +257,25 @@ function Draw() {
         G.ctx.fillStyle = "#ffffff";
         G.ctx.fillRect(0, 0, 1200, 700);
         G.ctx.fillStyle = "#000000";
-        G.ctx.font = "24px 'Press Start 2P', sans-serif";
-        G.ctx.textAlign = "left";
-        G.ctx.fillText("Time: " + G.timer.toFixed(2), 10, 34);
-        G.ctx.fillStyle = "#000000";
-        G.ctx.fillRect(G.character.x, G.character.y, G.character.width, G.character.height);
+        G.ctx.fillRect(G.character.x + G.offset.x, G.character.y + G.offset.y, G.character.width, G.character.height);
         for (const platform of G.objects) {
             G.ctx.fillStyle = G.colors[platform.type];
-            G.ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+            G.ctx.fillRect(platform.x + G.offset.x, platform.y + G.offset.y, platform.width, platform.height);
         }
         for (const deco of G.deco) {
             G.ctx.fillStyle = deco.color;
-            G.ctx.fillRect(deco.x, deco.y, deco.width, deco.height);
+            G.ctx.fillRect(deco.x + G.offset.x, deco.y + G.offset.y, deco.width, deco.height);
         }
         for (const text of G.texts) {
             G.ctx.fillStyle = text.color;
             G.ctx.font = text.font;
             G.ctx.textAlign = text.align;
-            G.ctx.fillText(text.text, text.x, text.y);
+            G.ctx.fillText(text.text, text.x + G.offset.x, text.y + G.offset.y);
         }
+        G.ctx.fillStyle = "#000000";
+        G.ctx.font = "24px 'Press Start 2P', sans-serif";
+        G.ctx.textAlign = "left";
+        G.ctx.fillText("Time: " + G.timer.toFixed(2), 10, 34);
     } if (G.scene == "e") {
         G.ctx.fillStyle = "#eeffee";
         G.ctx.fillRect(0, 0, 1200, 700);
@@ -436,6 +442,8 @@ function Main() {
     G.character.x += G.character.vx;
     G.character.y += G.character.vy;
     G.character.vy += 0.25;
+    G.offset.x = -G.character.x + 1200/2 - G.character.width/2;
+    G.offset.y = -G.character.y + 700/2 - G.character.height/2;
     Draw();
 }
 const drawScreen = setInterval(function () {

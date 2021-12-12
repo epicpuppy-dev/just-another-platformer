@@ -19,10 +19,10 @@
     ],
     "decorations": [
         {
-            "x": 290,
-            "y": 290,
-            "width": 40,
-            "height": 40,
+            "x": 295,
+            "y": 295,
+            "width": 30,
+            "height": 30,
             "color": "#ccff3377"
         }
     ],
