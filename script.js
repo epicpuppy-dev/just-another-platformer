@@ -289,8 +289,16 @@ function Draw() {
         }
         G.ctx.fillStyle = "#000000";
         G.ctx.font = "24px 'Press Start 2P', sans-serif";
+        G.ctx.fillStyle = "#eeeeee";
+        G.ctx.fillRect(0, 0, 1400, 40);
         G.ctx.textAlign = "left";
-        G.ctx.fillText("Time: " + G.timer.toFixed(2), 10, 34);
+        G.ctx.fillStyle = "#000000";
+        G.ctx.textBaseline = "top";
+        G.ctx.fillText("Time: " + G.timer.toFixed(2), 10, 10);
+        G.ctx.textAlign = "right";
+        G.ctx.fillText(G.levels[G.pack].name + " - Level " + (G.level + 1) + "/" + (G.levels[G.pack].levels.length - 1), 1190, 10);
+        G.ctx.textAlign = "left";
+        G.ctx.textBaseline = "alphabetic"
     } if (G.scene == "e") {
         G.ctx.fillStyle = "#eeffee";
         G.ctx.fillRect(0, 0, 1200, 700);
