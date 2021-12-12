@@ -1,4 +1,4 @@
-const canvas = document.getElementById("main");
+    const canvas = document.getElementById("main");
 const winSound = new Audio("sounds/win.wav");
 const jumpSoundA = new Audio("sounds/jump.wav");
 const jumpSoundB = new Audio("sounds/jump.wav");
@@ -183,7 +183,7 @@ function LoadLevel(levelid) {
     G.playing = true;
 }
 async function FetchLevels() {
-    let levels = await FetchFile("./levels.json");
+    let levels = await FetchFile("./levels.json?r=" + Math.random());
     G.levels = levels;
     for (const pack of G.levels) {
         console.log("LOADPACK: " + pack.id + ", " + pack.levels.length + " levels");
@@ -191,7 +191,7 @@ async function FetchLevels() {
             if (level.gg == true) {
                 continue;
             }
-            level.level = await FetchFile(level.file);
+            level.level = await FetchFile(level.file + "?r=" + Math.random());
         }
     }
     loaded = true;
