@@ -80,18 +80,18 @@
             "height": 50
         },
         {
-            "type": 0,
+            "type": 3,
             "x": -100,
             "y": 6200,
             "width": 200,
-            "height": 10000
+            "height": 50
         },
         {
-            "type": 0,
+            "type": 3,
             "x": -50,
             "y": 7400,
             "width": 200,
-            "height": 10000
+            "height": 50
         },
         {
             "type": 9,
