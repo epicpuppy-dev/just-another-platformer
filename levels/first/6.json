@@ -12,9 +12,23 @@
         {
             "type": 3,
             "x": -2000,
-            "y": 450,
-            "width": 5200,
+            "y": 250,
+            "width": 6200,
             "height": 500
+        },
+        {
+            "type": 0,
+            "x": 0,
+            "y": 0,
+            "width": 700,
+            "height": 50
+        },
+        {
+            "type": 9,
+            "x": 650,
+            "y": -50,
+            "width": 50,
+            "height": 50
         }
     ],
     "decorations": [
@@ -28,11 +42,11 @@
     ],
     "texts": [
         {
-            "x": 1190,
-            "y": 24,
-            "size": 24,
+            "x": 800,
+            "y": -80,
+            "size": 16,
             "font": "'Press Start 2P', sans-serif",
-            "text": "Why Hello!",
+            "text": "Hope you enjoyed your break...",
             "color": "black",
             "align": "right"
         }

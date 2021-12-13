@@ -10,7 +10,7 @@
                 "file": "levels/tutorial/1.json"
             },
             {
-                "name": "Jumping Exists",
+                "name": "You Can Jump!",
                 "id": "tutorial2",
                 "file": "levels/tutorial/2.json"
             },
@@ -53,6 +53,41 @@
                 "name": "The First Trial",
                 "id": "first1",
                 "file": "levels/first/1.json"
+            },
+            {
+                "name": "The Second Trial?",
+                "id": "first2",
+                "file": "levels/first/2.json"
+            },
+            {
+                "name": "A Bunch of Bounces",
+                "id": "first3",
+                "file": "levels/first/3.json"
+            },
+            {
+                "name": "A Bunch of Bounces (Pt. 2)",
+                "id": "first4",
+                "file": "levels/first/4.json"
+            },
+            {
+                "name": "It's a small world",
+                "id": "first5",
+                "file": "levels/first/5.json"
+            },
+            {
+                "name": "A quiet break",
+                "id": "first6",
+                "file": "levels/first/6.json"
+            },
+            {
+                "name": "Back to the Action",
+                "id": "first7",
+                "file": "levels/first/7.json"
+            },
+            {
+                "name": "This Looks Familliar",
+                "id": "first8",
+                "file": "levels/first/8.json"
             },
             {
                 "gg": true

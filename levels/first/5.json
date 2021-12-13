@@ -1,0 +1,88 @@
+{
+    "goal": "flag",
+    "character": {
+        "width": 16,
+        "height": 16
+    },
+    "spawn": {
+        "x": 50,
+        "y": -50
+    },
+    "objects": [
+        {
+            "type": 3,
+            "x": -2000,
+            "y": 200,
+            "width": 5200,
+            "height": 500
+        },
+        {
+            "type": 1,
+            "x": 0,
+            "y": 30,
+            "width": 120,
+            "height": 30
+        },
+        {
+            "type": 1,
+            "x": 180,
+            "y": -30,
+            "width": 90,
+            "height": 30
+        },
+        {
+            "type": 5,
+            "x": 330,
+            "y": -90,
+            "width": 90,
+            "height": 30
+        },
+        {
+            "type": 1,
+            "x": 750,
+            "y": -90,
+            "width": 120,
+            "height": 30
+        },
+        {
+            "type": 1,
+            "x": 1050,
+            "y": -30,
+            "width": 120,
+            "height": 30
+        },
+        {
+            "type": 6,
+            "x": 1350,
+            "y": -30,
+            "width": 90,
+            "height": 30
+        },
+        {
+            "type": 5,
+            "x": 1800,
+            "y": -210,
+            "width": 120,
+            "height": 30
+        },
+        {
+            "type": 9,
+            "x": 2400,
+            "y": -180,
+            "width": 120,
+            "height": 30
+        }
+    ],
+    "decorations": [
+        {
+            "x": 45,
+            "y": -55,
+            "width": 26,
+            "height": 26,
+            "color": "#ccff3377"
+        }
+    ],
+    "texts": [
+        
+    ]
+}

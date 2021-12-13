@@ -296,7 +296,9 @@ function Draw() {
         G.ctx.textBaseline = "top";
         G.ctx.fillText("Time: " + G.timer.toFixed(2), 10, 10);
         G.ctx.textAlign = "right";
-        G.ctx.fillText(G.levels[G.pack].name + " - Level " + (G.level + 1) + "/" + (G.levels[G.pack].levels.length - 1), 1190, 10);
+        G.ctx.textBaseline = "middle";
+        G.ctx.font = "16px 'Press Start 2P', sans-serif";
+        G.ctx.fillText(G.levels[G.pack].name + " - " + G.levels[G.pack].levels[G.level].name + " - " + (G.level + 1) + "/" + (G.levels[G.pack].levels.length - 1), 1190, 20);
         G.ctx.textAlign = "left";
         G.ctx.textBaseline = "alphabetic"
     } if (G.scene == "e") {
@@ -394,7 +396,10 @@ function Main() {
     if (collisions.length != 0) {
         var collide = true;
         for (const collision of collisions) {
-            G.jumps = 0;
+            const direction = CollisionDirection(G.character.collider, collision);
+            if (direction == "t") {
+                G.jumps = 0;
+            }
             if (collision.type == 3) {
                 dieSound.play();
                 G.character.x = G.leveldata.spawn.x;
@@ -402,15 +407,15 @@ function Main() {
                 G.character.vx = 0;
                 G.character.vy = 0;
                 collide = false;
-            } if (collision.type == 1) {
+            } if (collision.type == 1 && direction == "t") {
                 G.jumps = 1;
-            } if (collision.type == 5) {
+            } if (collision.type == 5 && direction == "t") {
                 G.jumps = 2;
-            } if (collision.type == 2 && G.character.vy > 2 && CollisionDirection(G.character.collider, collision) == "t") {
+            } if (collision.type == 2 && G.character.vy > 4 && direction == "t") {
                 bounceSound.play();
                 G.character.vy = -G.character.vy * 0.65;
                 collide = false;
-            } if (collision.type == 6) {
+            } if (collision.type == 6 && direction == "t") {
                 G.jumps = 3;
             } if (collision.type == 9) {
                 winSound.play();
@@ -438,14 +443,14 @@ function Main() {
                     LoadLevel(G.levels[G.pack].levels[G.level].id);
                 }
                 collide = false;
-            } if (collision.type == 7 && G.character.vy > 2 && CollisionDirection(G.character.collider, collision) == "t") {
+            } if (collision.type == 7 && G.character.vy > 4 && direction == "t") {
                 bounceSound.play();
                 G.character.vy = -G.character.vy * 0.65;
                 G.jumps = 1;
                 collide = false;
             }
             if (collide) {
-                direction = CollisionDirection(G.character.collider, collision);
+                
                 if (direction == "t") {
                     G.character.y = collision.y - G.character.height;
                     G.character.vy = 0;
