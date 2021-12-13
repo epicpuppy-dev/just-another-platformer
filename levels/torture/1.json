@@ -1,0 +1,75 @@
+{
+    "goal": "flag",
+    "character": {
+        "width": 18,
+        "height": 18
+    },
+    "spawn": {
+        "x": 50,
+        "y": -50
+    },
+    "objects": [
+        {
+            "type": 3,
+            "x": -2000,
+            "y": 250,
+            "width": 5200,
+            "height": 500
+        },
+        {
+            "type": 1,
+            "x": 0,
+            "y": 0,
+            "width": 1000,
+            "height": 50
+        },
+        {
+            "type": 3,
+            "x": 240,
+            "y": -65,
+            "width": 20,
+            "height": 65
+        },
+        {
+            "type": 3,
+            "x": 490,
+            "y": -70,
+            "width": 20,
+            "height": 70
+        },
+        {
+            "type": 3,
+            "x": 740,
+            "y": -72,
+            "width": 20,
+            "height": 72
+        },
+        {
+            "type": 9,
+            "x": 950,
+            "y": -50,
+            "width": 50,
+            "height": 50
+        }
+    ],
+    "decorations": [
+        {
+            "x": 45,
+            "y": -50,
+            "width": 28,
+            "height": 28,
+            "color": "#ccff3377"
+        }
+    ],
+    "texts": [
+        {
+            "x": 1000,
+            "y": -60,
+            "size": 16,
+            "font": "'Press Start 2P', sans-serif",
+            "text": "Having Fun? :D",
+            "color": "black",
+            "align": "right"
+        }
+    ]
+}
