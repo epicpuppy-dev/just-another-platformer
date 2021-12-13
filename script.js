@@ -248,7 +248,7 @@ function Draw() {
         G.ctx.textBaseline = "bottom";
         G.ctx.font = "24px 'Press Start 2P', sans-serif";
         G.ctx.textAlign = "right";
-        G.ctx.fillText("Ver. 0.2.1", 1190, 698);
+        G.ctx.fillText("Ver. 0.2.3", 1190, 698);
         G.ctx.textAlign = "center";
         if (loaded) {
             G.ctx.fillText("Press JUMP to start", 600, 698);
