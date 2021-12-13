@@ -243,7 +243,7 @@ function Draw() {
         G.ctx.textBaseline = "bottom";
         G.ctx.font = "24px 'Press Start 2P', sans-serif";
         G.ctx.textAlign = "right";
-        G.ctx.fillText("Ver. 0.2.0", 1190, 698);
+        G.ctx.fillText("Ver. 0.2.1", 1190, 698);
         G.ctx.textAlign = "center";
         if (loaded) {
             G.ctx.fillText("Press JUMP to start", 600, 698);
@@ -454,13 +454,13 @@ function Main() {
                 if (direction == "t") {
                     G.character.y = collision.y - G.character.height;
                     G.character.vy = 0;
-                } if (direction == "b") {
+                } else if (direction == "b") {
                     G.character.y = collision.y + collision.height;
                     G.character.vy = 0;
-                } if (direction == "l") {
+                } else if (direction == "l") {
                     G.character.x = collision.x - G.character.width;
                     G.character.vx = 0;
-                } if (direction == "r") {
+                } else if (direction == "r") {
                     G.character.x = collision.x + collision.width;
                     G.character.vx = 0;
                 }
