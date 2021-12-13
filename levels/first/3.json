@@ -1,0 +1,139 @@
+{
+    "goal": "flag",
+    "character": {
+        "width": 20,
+        "height": 20
+    },
+    "spawn": {
+        "x": 50,
+        "y": -50
+    },
+    "objects": [
+        {
+            "type": 3,
+            "x": -2000,
+            "y": 750,
+            "width": 6200,
+            "height": 500
+        },
+        {
+            "type": 0,
+            "x": 0,
+            "y": 0,
+            "width": 200,
+            "height": 50
+        },
+        {
+            "type": 7,
+            "x": 250,
+            "y": 250,
+            "width": 200,
+            "height": 50
+        },
+        {
+            "type": 0,
+            "x": 500,
+            "y": 100,
+            "width": 200,
+            "height": 50
+        },
+        {
+            "type": 7,
+            "x": 750,
+            "y": 350,
+            "width": 200,
+            "height": 50
+        },
+        {
+            "type": 0,
+            "x": 1000,
+            "y": 200,
+            "width": 200,
+            "height": 50
+        },
+        {
+            "type": 7,
+            "x": 1250,
+            "y": 450,
+            "width": 200,
+            "height": 50
+        },
+        {
+            "type": 0,
+            "x": 1500,
+            "y": 300,
+            "width": 200,
+            "height": 50
+        },
+        {
+            "type": 7,
+            "x": 1750,
+            "y": 550,
+            "width": 200,
+            "height": 50
+        },
+        {
+            "type": 0,
+            "x": 2000,
+            "y": 400,
+            "width": 200,
+            "height": 50
+        }
+        ,
+        {
+            "type": 7,
+            "x": 2250,
+            "y": 650,
+            "width": 200,
+            "height": 50
+        },
+        {
+            "type": 0,
+            "x": 2500,
+            "y": 500,
+            "width": 200,
+            "height": 50
+        },
+        {
+            "type": 9,
+            "x": 2650,
+            "y": 450,
+            "width": 50,
+            "height": 50
+        }
+    ],
+    "decorations": [
+        {
+            "x": 45,
+            "y": -55,
+            "width": 30,
+            "height": 30,
+            "color": "#ccff3377"
+        },
+        {
+            "x": 250,
+            "y": 140,
+            "width": 200,
+            "height": 10,
+            "color": "#ffee3355"
+        },
+        {
+            "x": 750,
+            "y": 240,
+            "width": 200,
+            "height": 10,
+            "color": "#ffee3355"
+        }
+    ],
+    "texts": [
+        {
+            "x": 0,
+            "y": -60,
+            "size": 16,
+            "font": "'Press Start 2P', sans-serif",
+            "text": "Jump when you get to the yellow",
+            "color": "black",
+            "align": "left"
+        }
+    ]
+}

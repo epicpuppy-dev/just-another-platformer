@@ -1,4 +1,4 @@
-    const canvas = document.getElementById("main");
+const canvas = document.getElementById("main");
 const winSound = new Audio("sounds/win.wav");
 const jumpSoundA = new Audio("sounds/jump.wav");
 const jumpSoundB = new Audio("sounds/jump.wav");
@@ -74,8 +74,13 @@ class GameText {
     }
 }
 async function FetchFile(file) {
+    try {
     let res = await fetch(file);
     return await res.json();
+    } catch (err) {
+        console.log(err.stack);
+        console.log("ERROR FROM FetchFile");
+    }
 }
 function CollisionDirection(root, object) {
     var root_bottom = root.y + root.height;
@@ -183,18 +188,28 @@ function LoadLevel(levelid) {
     G.playing = true;
 }
 async function FetchLevels() {
+    try {
     let levels = await FetchFile("./levels.json?r=" + Math.random());
     G.levels = levels;
     for (const pack of G.levels) {
         console.log("LOADPACK: " + pack.id + ", " + pack.levels.length + " levels");
         for (const level of pack.levels) {
+            try {
             if (level.gg == true) {
                 continue;
             }
             level.level = await FetchFile(level.file + "?r=" + Math.random());
+            } catch (err) {
+                console.log(err.stack);
+                console.log("ERROR FROM FetchLevels: load level")
+            }
         }
     }
     loaded = true;
+    } catch (err) {
+        console.log(err.stack);
+        console.log("ERROR FROM FetchLevels");
+    }
 }
 FetchLevels();
 G.colors = [
@@ -228,7 +243,7 @@ function Draw() {
         G.ctx.textBaseline = "bottom";
         G.ctx.font = "24px 'Press Start 2P', sans-serif";
         G.ctx.textAlign = "right";
-        G.ctx.fillText("Ver. 0.1.2", 1190, 698);
+        G.ctx.fillText("Ver. 0.2.0", 1190, 698);
         G.ctx.textAlign = "center";
         if (loaded) {
             G.ctx.fillText("Press JUMP to start", 600, 698);
@@ -274,8 +289,18 @@ function Draw() {
         }
         G.ctx.fillStyle = "#000000";
         G.ctx.font = "24px 'Press Start 2P', sans-serif";
+        G.ctx.fillStyle = "#eeeeee";
+        G.ctx.fillRect(0, 0, 1400, 40);
         G.ctx.textAlign = "left";
-        G.ctx.fillText("Time: " + G.timer.toFixed(2), 10, 34);
+        G.ctx.fillStyle = "#000000";
+        G.ctx.textBaseline = "top";
+        G.ctx.fillText("Time: " + G.timer.toFixed(2), 10, 10);
+        G.ctx.textAlign = "right";
+        G.ctx.textBaseline = "middle";
+        G.ctx.font = "16px 'Press Start 2P', sans-serif";
+        G.ctx.fillText(G.levels[G.pack].name + " - " + G.levels[G.pack].levels[G.level].name + " - " + (G.level + 1) + "/" + (G.levels[G.pack].levels.length - 1), 1190, 20);
+        G.ctx.textAlign = "left";
+        G.ctx.textBaseline = "alphabetic"
     } if (G.scene == "e") {
         G.ctx.fillStyle = "#eeffee";
         G.ctx.fillRect(0, 0, 1200, 700);
@@ -371,7 +396,10 @@ function Main() {
     if (collisions.length != 0) {
         var collide = true;
         for (const collision of collisions) {
-            G.jumps = 0;
+            const direction = CollisionDirection(G.character.collider, collision);
+            if (direction == "t") {
+                G.jumps = 0;
+            }
             if (collision.type == 3) {
                 dieSound.play();
                 G.character.x = G.leveldata.spawn.x;
@@ -379,15 +407,15 @@ function Main() {
                 G.character.vx = 0;
                 G.character.vy = 0;
                 collide = false;
-            } if (collision.type == 1) {
+            } if (collision.type == 1 && direction == "t") {
                 G.jumps = 1;
-            } if (collision.type == 5) {
+            } if (collision.type == 5 && direction == "t") {
                 G.jumps = 2;
-            } if (collision.type == 2 && G.character.vy > 2 && CollisionDirection(G.character.collider, collision) == "t") {
+            } if (collision.type == 2 && G.character.vy > 4 && direction == "t") {
                 bounceSound.play();
                 G.character.vy = -G.character.vy * 0.65;
                 collide = false;
-            } if (collision.type == 6) {
+            } if (collision.type == 6 && direction == "t") {
                 G.jumps = 3;
             } if (collision.type == 9) {
                 winSound.play();
@@ -415,14 +443,14 @@ function Main() {
                     LoadLevel(G.levels[G.pack].levels[G.level].id);
                 }
                 collide = false;
-            } if (collision.type == 7 && G.character.vy > 2 && CollisionDirection(G.character.collider, collision) == "t") {
+            } if (collision.type == 7 && G.character.vy > 4 && direction == "t") {
                 bounceSound.play();
                 G.character.vy = -G.character.vy * 0.65;
                 G.jumps = 1;
                 collide = false;
             }
             if (collide) {
-                direction = CollisionDirection(G.character.collider, collision);
+                
                 if (direction == "t") {
                     G.character.y = collision.y - G.character.height;
                     G.character.vy = 0;

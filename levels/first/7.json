@@ -1,0 +1,102 @@
+{
+    "goal": "flag",
+    "character": {
+        "width": 20,
+        "height": 20
+    },
+    "spawn": {
+        "x": 50,
+        "y": -50
+    },
+    "objects": [
+        {
+            "type": 3,
+            "x": -4000,
+            "y": 250,
+            "width": 6200,
+            "height": 500
+        },
+        {
+            "type": 2,
+            "x": 0,
+            "y": 0,
+            "width": 200,
+            "height": 50
+        },
+        {
+            "type": 5,
+            "x": 200,
+            "y": 0,
+            "width": 100,
+            "height": 50
+        },
+        {
+            "type": 1,
+            "x": 300,
+            "y": -100,
+            "width": 100,
+            "height": 50
+        },
+        {
+            "type": 1,
+            "x": -200,
+            "y": -50,
+            "width": 100,
+            "height": 50
+        },
+        {
+            "type": 1,
+            "x": -450,
+            "y": -100,
+            "width": 100,
+            "height": 50
+        },
+        {
+            "type": 1,
+            "x": -700,
+            "y": -150,
+            "width": 100,
+            "height": 50
+        },
+        {
+            "type": 1,
+            "x": -950,
+            "y": -200,
+            "width": 100,
+            "height": 50
+        },
+        {
+            "type": 7,
+            "x": -1200,
+            "y": 0,
+            "width": 150,
+            "height": 50
+        },
+        {
+            "type": 1,
+            "x": -1500,
+            "y": -150,
+            "width": 100,
+            "height": 50
+        },
+        {
+            "type": 9,
+            "x": -1700,
+            "y": -250,
+            "width": 50,
+            "height": 100
+        }
+    ],
+    "decorations": [
+        {
+            "x": 45,
+            "y": -55,
+            "width": 30,
+            "height": 30,
+            "color": "#ccff3377"
+        }
+    ],
+    "texts": [
+
+    ]
+}
