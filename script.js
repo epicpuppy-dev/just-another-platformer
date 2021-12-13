@@ -188,6 +188,14 @@ function LoadLevel(levelid) {
     }
     G.playing = true;
 }
+async function FetchLevel(file, pack, level) {
+    let data = await FetchFile(file);
+    if (data.gg) {
+        return;
+    }
+    G.levels[pack].levels[level].level = data;
+    G.levelsLoaded++;
+}
 async function FetchLevels() {
     try {
     let levels = await FetchFile("./levels.json?r=" + Math.random());
@@ -195,22 +203,22 @@ async function FetchLevels() {
     G.levelCount = 0;
     G.levelsLoaded = 0;
     for (const pack of G.levels) G.levelCount += pack.levels.length - 1;
-    for (const pack of G.levels) {
-        console.log("LOADPACK: " + pack.id + ", " + pack.levels.length + " levels");
-        for (const level of pack.levels) {
-            try {
+    for (let x = 0; x < G.levels.length; x++) {
+        pack = G.levels[x];
+        for (let y = 0; y < pack.levels.length; y++) {
+            level = pack.levels[y];
             if (level.gg == true) {
                 continue;
             }
-            level.level = await FetchFile(level.file + "?r=" + Math.random());
-            } catch (err) {
-                console.log(err.stack);
-                console.log("ERROR FROM FetchLevels: load level")
-            }
-            G.levelsLoaded += 1;
+            FetchLevel(level.file, x, y);
         }
     }
-    loaded = true;
+    G.loadCheck = setInterval(function() {
+        if (G.levelsLoaded == G.levelCount) {
+            loaded = true;
+            clearInterval(G.loadCheck);
+        }
+    }, 100);
     } catch (err) {
         console.log(err.stack);
         console.log("ERROR FROM FetchLevels");
@@ -248,7 +256,7 @@ function Draw() {
         G.ctx.textBaseline = "bottom";
         G.ctx.font = "24px 'Press Start 2P', sans-serif";
         G.ctx.textAlign = "right";
-        G.ctx.fillText("Ver. 0.2.4", 1190, 698);
+        G.ctx.fillText("Ver. 0.2.5", 1190, 698);
         G.ctx.textAlign = "center";
         if (loaded) {
             G.ctx.fillText("Press JUMP to start", 600, 698);
