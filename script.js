@@ -13,6 +13,7 @@ G.bestTimes = JSON.parse(window.localStorage.getItem("bestTimes"));
 if (G.bestTimes == null) {
     G.bestTimes = {};
 }
+G.levelCount = 0;
 G.record = false;
 G.pack = 0;
 G.level = 0;
@@ -191,6 +192,9 @@ async function FetchLevels() {
     try {
     let levels = await FetchFile("./levels.json?r=" + Math.random());
     G.levels = levels;
+    G.levelCount = 0;
+    G.levelsLoaded = 0;
+    for (const pack of G.levels) G.levelCount += pack.levels.length - 1;
     for (const pack of G.levels) {
         console.log("LOADPACK: " + pack.id + ", " + pack.levels.length + " levels");
         for (const level of pack.levels) {
@@ -204,6 +208,7 @@ async function FetchLevels() {
                 console.log("ERROR FROM FetchLevels: load level")
             }
         }
+        G.levelsLoaded += 1;
     }
     loaded = true;
     } catch (err) {
@@ -266,7 +271,14 @@ function Draw() {
                 G.ctx.fillText(G.bestTimes[G.levels[G.pack].id].toFixed(2) + "s", 600, 500);
             }
         } else {
-            G.ctx.fillText("Loading...", 600, 698);
+            G.ctx.textAlign = "center";
+            G.ctx.textBaseline = "bottom";
+            if (G.levelCount != 0) {
+                G.ctx.fillText("Loading... (" + G.levelsLoaded + "/" + G.levelCount + ")", 600, 698);
+            } else {
+                G.ctx.fillText("Loading...", 600, 698);
+            }
+            G.ctx.textBaseline = "alphabetical";
         }
     } if (G.scene == "g") {
         G.ctx.fillStyle = "#ffffff";
