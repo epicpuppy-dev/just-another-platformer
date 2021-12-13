@@ -256,7 +256,7 @@ function Draw() {
         G.ctx.textBaseline = "bottom";
         G.ctx.font = "24px 'Press Start 2P', sans-serif";
         G.ctx.textAlign = "right";
-        G.ctx.fillText("Ver. 0.2.5", 1190, 698);
+        G.ctx.fillText("Ver. 0.3.0", 1190, 698);
         G.ctx.textAlign = "center";
         if (loaded) {
             G.ctx.fillText("Press JUMP to start", 600, 698);
@@ -490,6 +490,9 @@ function Main() {
     G.character.x += G.character.vx;
     G.character.y += G.character.vy;
     G.character.vy += 0.25;
+    if (G.character.vy > 25) {
+        G.character.vy = 25
+    }
     G.offset.x = -G.character.x + 1200/2 - G.character.width/2;
     G.offset.y = -G.character.y + 700/2 - G.character.height/2;
     Draw();

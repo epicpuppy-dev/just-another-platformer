@@ -93,5 +93,35 @@
                 "gg": true
             }   
         ]
+    },
+    {
+        "name": "Torture",
+        "id": "torture",
+        "difficulty": 4,
+        "levels": [
+            {
+                "name": "This is Precision",
+                "id": "torture1",
+                "file": "levels/torture/1.json"  
+            },
+            {
+                "name": "Thread the Needle",
+                "id": "torture2",
+                "file": "levels/torture/2.json"
+            },
+            {
+                "name": "Going Down?",
+                "id": "torture3",
+                "file": "levels/torture/3.json"
+            },
+            {
+                "name": "World's Hardest Jump",
+                "id": "torture4",
+                "file": "levels/torture/4.json"
+            },
+            {
+                "gg": true
+            }   
+        ]
     }
 ]
