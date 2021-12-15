@@ -165,6 +165,7 @@ function LoadLevel(levelid) {
     //Load level data from id
     G.character.vx = 0;
     G.character.vy = 0;
+    G.jumps = 0;
     console.log("LOADLEVEL: " + levelid);
     G.leveldata = null;
     for (const pack of G.levels) {
