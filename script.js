@@ -1,4 +1,7 @@
+//Get canvas from html
 const canvas = document.getElementById("main");
+
+//Load sounds
 const winSound = new Audio("sounds/win.wav");
 const jumpSoundA = new Audio("sounds/jump.wav");
 const jumpSoundB = new Audio("sounds/jump.wav");
@@ -8,6 +11,8 @@ const dieSound = new Audio("sounds/die.wav");
 const jumpSounds = [jumpSoundA, jumpSoundB, jumpSoundC];
 var jumpsound = 0;
 var loaded = false;
+
+//Define game
 G = {}
 G.bestTimes = JSON.parse(window.localStorage.getItem("bestTimes"));
 if (G.bestTimes == null) {
@@ -38,6 +43,7 @@ G.character.collider.x = 0;
 G.character.collider.y = 0;
 G.character.collider.width = 0;
 G.character.collider.height = 0;
+G.version = "";
 G.jumps = 0;
 G.keys = {};
 G.keys.left = false;
@@ -84,6 +90,7 @@ async function FetchFile(file) {
     }
 }
 function CollisionDirection(root, object) {
+    //Get distances from each side
     var root_bottom = root.y + root.height;
     var object_bottom = object.y + object.height;
     var root_right = root.x + root.width;
@@ -94,6 +101,7 @@ function CollisionDirection(root, object) {
     var l_collision = root_right - object.x;
     var r_collision = object_right - root.x;
 
+    //Return closest side
     if (t_collision < b_collision && t_collision < l_collision && t_collision < r_collision) {
         return "t";
     }
@@ -109,6 +117,7 @@ function CollisionDirection(root, object) {
     return null;
 }
 function IsCollision(root, object) {
+    //Detect if objects are overlapping
     var collision = false;
     if (
         root.x > object.x &&
@@ -142,6 +151,7 @@ function IsCollision(root, object) {
     return collision;
 }
 function LevelCollision(root) {
+    //Run collision with every object in level
     var collisions = [];
     for (const object of G.objects) {
         var collision = IsCollision(root, object);
@@ -152,6 +162,7 @@ function LevelCollision(root) {
     return collisions;
 }
 function LoadLevel(levelid) {
+    //Load level data from id
     G.character.vx = 0;
     G.character.vy = 0;
     console.log("LOADLEVEL: " + levelid);
@@ -189,6 +200,7 @@ function LoadLevel(levelid) {
     G.playing = true;
 }
 async function FetchLevel(file, pack, level) {
+    //Fetch a level from a file or url
     let data = await FetchFile(file);
     if (data.gg) {
         return;
@@ -197,12 +209,16 @@ async function FetchLevel(file, pack, level) {
     G.levelsLoaded++;
 }
 async function FetchLevels() {
+    //Fetch all levels from levels.json
     try {
     let levels = await FetchFile("./levels.json?r=" + Math.random());
     G.levels = levels;
-    G.levelCount = 0;
+    G.levelCount = 1;
     G.levelsLoaded = 0;
     for (const pack of G.levels) G.levelCount += pack.levels.length - 1;
+    const version = await FetchFile("./version.json?r=" + Math.random());
+    G.version = version.version;
+    G.levelsLoaded += 1;
     for (let x = 0; x < G.levels.length; x++) {
         pack = G.levels[x];
         for (let y = 0; y < pack.levels.length; y++) {
@@ -230,7 +246,7 @@ G.colors = [
     "#666644", //1: Jump
     "#44aa44", //2: Bounce
     "#ee2222", //3: Lava
-    "#eeee44", //4: Bounce Pad
+    "#44aaee", //4: Bounce Pad
     "#aaaa44", //5: Double Jump
     "#eeee44", //6: Triple Jump
     "#88aa44", //7: Jump Bounce Pad
@@ -245,6 +261,7 @@ G.difficultyColors = [
     "#dd4444", //4
 ]
 function Draw() {
+    //Draw Menu
     if (G.scene == "m") {
         G.ctx.fillStyle = "#ffffff";
         G.ctx.fillRect(0, 0, 1200, 700);
@@ -255,10 +272,12 @@ function Draw() {
         G.ctx.fillText("Just Another Platformer", 600, 200);
         G.ctx.textBaseline = "bottom";
         G.ctx.font = "24px 'Press Start 2P', sans-serif";
-        G.ctx.textAlign = "right";
-        G.ctx.fillText("Ver. 0.3.1", 1190, 698);
         G.ctx.textAlign = "center";
+        //Draw if levels loaded
         if (loaded) {
+            G.ctx.textAlign = "right";
+            G.ctx.fillText("Ver. " + G.version, 1190, 698);
+            G.ctx.textAlign = "center";
             G.ctx.fillText("Press JUMP to start", 600, 698);
             G.ctx.textBaseline = "middle";
             G.ctx.font = "32px 'Press Start 2P', sans-serif";
@@ -288,6 +307,7 @@ function Draw() {
             }
             G.ctx.textBaseline = "alphabetical";
         }
+    //Draw game
     } if (G.scene == "g") {
         G.ctx.fillStyle = "#ffffff";
         G.ctx.fillRect(0, 0, 1200, 700);
@@ -321,6 +341,7 @@ function Draw() {
         G.ctx.fillText(G.levels[G.pack].name + " - " + G.levels[G.pack].levels[G.level].name + " - " + (G.level + 1) + "/" + (G.levels[G.pack].levels.length - 1), 1190, 20);
         G.ctx.textAlign = "left";
         G.ctx.textBaseline = "alphabetic"
+    //Draw end screen
     } if (G.scene == "e") {
         G.ctx.fillStyle = "#eeffee";
         G.ctx.fillRect(0, 0, 1200, 700);
@@ -340,7 +361,9 @@ function Draw() {
         }
     }
 }
+//Detect key pressed
 document.addEventListener('keydown', function (event) {
+    //If in menu
     if (G.scene == "m" && loaded) {
         if (event.code == "Space") {
             LoadLevel(G.levels[G.pack].levels[G.level].id);
@@ -348,6 +371,7 @@ document.addEventListener('keydown', function (event) {
             G.vx = 0;
             G.scene = "g";
         }
+        //Navigate menu
         if (event.code == "ArrowRight") {
             if (G.pack < G.levels.length - 1) {
                 G.pack++;
@@ -384,7 +408,26 @@ document.addEventListener('keydown', function (event) {
         G.level = 0;
         G.record = false;
     }
+    else if (event.code == "KeyR" && G.scene == "g") {
+        G.level = 0;
+        G.timer = 0;
+        G.objects = [];
+        G.deco = [];
+        G.texts = [];
+        G.character.vy = 0;
+        G.character.vx = 0;
+        LoadLevel(G.levels[G.pack].levels[G.level].id);
+    }
+    else if (event.code == "KeyQ" && G.scene == "g") {
+        G.level = 0;
+        G.timer = 0;
+        G.objects = [];
+        G.deco = [];
+        G.texts = [];
+        G.scene = "m";
+    }
 });
+//Key up
 document.addEventListener('keyup', function (event) {
     if (event.code == "ArrowLeft") {
         G.keys.left = false;
@@ -394,6 +437,7 @@ document.addEventListener('keyup', function (event) {
     }
 });
 function Movement() {
+    //Change character velocity
     if (G.keys.left && G.character.vx > -6) {
         G.character.vx -= 0.4;
     } if (G.keys.right && G.character.vx < 6) {
@@ -406,20 +450,25 @@ function Movement() {
     }
 }
 function Main() {
+    //Increment timer
     if (G.playing) {
         G.timer = parseFloat((G.timer + 0.02).toFixed(2));
     }
-    G.character.collider.x = G.character.x + G.character.vx;
-    G.character.collider.y = G.character.y + G.character.vy;
+    //Create character collider where it would be next frame
+    G.character.collider.x = Math.round(G.character.x + G.character.vx);
+    G.character.collider.y = Math.round(G.character.y + G.character.vy);
     Movement();
+    //Collide with objects
     var collisions = LevelCollision(G.character.collider)
     if (collisions.length != 0) {
         var collide = true;
+        //Loop through all collisions
         for (const collision of collisions) {
             const direction = CollisionDirection(G.character.collider, collision);
             if (direction == "t") {
                 G.jumps = 0;
             }
+            //Do stuff depending on object type
             if (collision.type == 3) {
                 dieSound.play();
                 G.character.x = G.leveldata.spawn.x;
@@ -431,6 +480,8 @@ function Main() {
                 G.jumps = 1;
             } if (collision.type == 5 && direction == "t") {
                 G.jumps = 2;
+            } if (collision.type == 4 && direction == "t") {
+                G.character.vy += collision.power;
             } if (collision.type == 2 && G.character.vy > 4 && direction == "t") {
                 bounceSound.play();
                 G.character.vy = -G.character.vy * 0.65;
@@ -438,6 +489,7 @@ function Main() {
             } if (collision.type == 6 && direction == "t") {
                 G.jumps = 3;
             } if (collision.type == 9) {
+                //Game finished
                 winSound.play();
                 G.level += 1;
                 G.objects = [];
