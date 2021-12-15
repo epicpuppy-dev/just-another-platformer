@@ -6,7 +6,7 @@ Type | Platform
 1    | Jump
 2    | Bounce
 3    | Death
-4    | N/A
+4    | Jump Pad (+ Power [-6 is default])
 5    | 2 Jump
 6    | 3 Jump
 7    | Jump Bounce

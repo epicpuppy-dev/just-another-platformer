@@ -95,6 +95,51 @@
         ]
     },
     {
+        "name": "Concepts",
+        "id": "concepts",
+        "difficulty": 2,
+        "levels": [
+            {
+                "name": "Concept of Obstacles",
+                "id": "concepts1",
+                "file": "levels/concepts/1.json"
+            },
+            {
+                "name": "Concept of Stairs",
+                "id": "concepts2",
+                "file": "levels/concepts/2.json"
+            },
+            {
+                "name": "Concept of Small Platforms",
+                "id": "concepts3",
+                "file": "levels/concepts/3.json"
+            },
+            {
+                "name": "Concept of Falling",
+                "id": "concepts4",
+                "file": "levels/concepts/4.json"
+            },
+            {
+                "name": "Concept of Symmetry",
+                "id": "concepts5",
+                "file": "levels/concepts/5.json"
+            },
+            {
+                "name": "Concept of Climbing",
+                "id": "concepts6",
+                "file": "levels/concepts/6.json"
+            },
+            {
+                "name": "Concept of Trolling",
+                "id": "concepts7",
+                "file": "levels/concepts/7.json"
+            },
+            {
+                "gg": true
+            }
+        ]
+    },
+    {
         "name": "Torture",
         "id": "torture",
         "difficulty": 4,
