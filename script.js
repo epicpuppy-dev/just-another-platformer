@@ -102,6 +102,16 @@ function CollisionDirection(root, object) {
     var r_collision = object_right - root.x;
 
     //Return closest side
+    if (
+        t_collision == b_collision || 
+        t_collision == l_collision || 
+        t_collision == r_collision ||
+        b_collision == l_collision ||
+        b_collision == r_collision ||
+        l_collision == r_collision
+    ) {
+        return;
+    }
     if (t_collision < b_collision && t_collision < l_collision && t_collision < r_collision) {
         return "t";
     }
@@ -114,7 +124,7 @@ function CollisionDirection(root, object) {
     if (r_collision < l_collision && r_collision < t_collision && r_collision < b_collision) {
         return "r";
     }
-    return null;
+    return;
 }
 function IsCollision(root, object) {
     //Detect if objects are overlapping
@@ -313,7 +323,7 @@ function Draw() {
         G.ctx.fillStyle = "#ffffff";
         G.ctx.fillRect(0, 0, 1200, 700);
         G.ctx.fillStyle = "#000000";
-        G.ctx.fillRect(G.character.x + G.offset.x, G.character.y + G.offset.y, G.character.width, G.character.height);
+        G.ctx.fillRect(600 - (G.character.width/2), 350 - (G.character.height/2), G.character.width, G.character.height);
         for (const platform of G.objects) {
             G.ctx.fillStyle = G.colors[platform.type];
             G.ctx.fillRect(platform.x + G.offset.x, platform.y + G.offset.y, platform.width, platform.height);
@@ -456,8 +466,8 @@ function Main() {
         G.timer = parseFloat((G.timer + 0.02).toFixed(2));
     }
     //Create character collider where it would be next frame
-    G.character.collider.x = Math.round(G.character.x + G.character.vx);
-    G.character.collider.y = Math.round(G.character.y + G.character.vy);
+    G.character.collider.x = G.character.x + G.character.vx;
+    G.character.collider.y = G.character.y + G.character.vy;
     Movement();
     //Collide with objects
     var collisions = LevelCollision(G.character.collider)
@@ -546,8 +556,8 @@ function Main() {
     if (G.character.vy > 25) {
         G.character.vy = 25
     }
-    G.offset.x = -G.character.x + 1200/2 - G.character.width/2;
-    G.offset.y = -G.character.y + 700/2 - G.character.height/2;
+    G.offset.x = Math.round(-G.character.x + 1200/2 - G.character.width/2);
+    G.offset.y = Math.round(-G.character.y + 700/2 - G.character.height/2);
     Draw();
 }
 const drawScreen = setInterval(function () {
