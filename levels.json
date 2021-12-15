@@ -140,6 +140,41 @@
         ]
     },
     {
+        "name": "Journey",
+        "id": "journey",
+        "difficulty": 3,
+        "levels": [
+            {
+                "name": "A Fork in the Road",
+                "id": "journey1",
+                "file": "levels/journey/1.json"
+            },
+            {
+                "name": "The Red Temple",
+                "id": "journey2",
+                "file": "levels/journey/2.json"
+            },
+            {
+                "name": "The Green Temple",
+                "id": "journey3",
+                "file": "levels/journey/3.json"
+            },
+            {
+                "name": "The Blue Temple",
+                "id": "journey4",
+                "file": "levels/journey/4.json"
+            },
+            {
+                "name": "The Yellow Temple",
+                "id": "journey5",
+                "file": "levels/journey/5.json"
+            },
+            {
+                "gg": true
+            }
+        ]
+    },
+    {
         "name": "Torture",
         "id": "torture",
         "difficulty": 4,
