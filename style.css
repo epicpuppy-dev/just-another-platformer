@@ -2,6 +2,11 @@
 html {
     background-color: black;
     text-align: center;
+    font-family: monospace;
+    color: white;
+}
+a {
+    color: white;
 }
 canvas {
     border: 2px solid gray;
