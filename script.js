@@ -181,6 +181,8 @@ function LoadLevel(levelid) {
     //Load level data from id
     G.character.vx = 0;
     G.character.vy = 0;
+    G.terminal.x = 6;
+    G.terminal.vx = 0.4;
     G.jumps = 0;
     console.log("LOADLEVEL: " + levelid);
     G.leveldata = null;
@@ -504,6 +506,8 @@ function Main() {
             //Do stuff depending on object type
             if (collision.type == 3) {
                 dieSound.play();
+                G.terminal.x = 6;
+                G.terminal.vx = 0.4;
                 G.character.x = G.leveldata.spawn.x;
                 G.character.y = G.leveldata.spawn.y;
                 G.character.vx = 0;
