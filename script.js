@@ -119,16 +119,16 @@ function CollisionDirection(object) {
     ) {
         return;
     }
-    if (t_collision < b_collision && t_collision < l_collision && t_collision < r_collision && root.vy > 0) {
+    if (t_collision < b_collision && t_collision < l_collision && t_collision < r_collision) {
         return "t";
     }
-    if (b_collision < t_collision && b_collision < l_collision && b_collision < r_collision && root.vy < 0) {
+    if (b_collision < t_collision && b_collision < l_collision && b_collision < r_collision) {
         return "b";
     }
-    if (l_collision < r_collision && l_collision < t_collision && l_collision < b_collision && root.vx < 0) {
+    if (l_collision < r_collision && l_collision < t_collision && l_collision < b_collision) {
         return "l";
     }
-    if (r_collision < l_collision && r_collision < t_collision && r_collision < b_collision && root.vx > 0) {
+    if (r_collision < l_collision && r_collision < t_collision && r_collision < b_collision) {
         return "r";
     }
     return;
