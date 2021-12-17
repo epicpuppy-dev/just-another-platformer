@@ -1,0 +1,46 @@
+{
+	"goal": "flag",
+	"character": {
+		"width": 20,
+		"height": 20
+	},
+	"spawn": {
+		"x": 50,
+		"y": -50
+	},
+	"objects": [{
+		"x": -2000,
+		"y": 450,
+		"width": 5200,
+		"height": 500,
+		"type": 3
+	}, {
+		"x": -50,
+		"y": 0,
+		"width": 250,
+		"height": 50,
+		"type": "0"
+	}, {
+        "x": 200,
+        "y": 0,
+        "width": 500,
+        "height": 50,
+        "type": "8",
+        "power": 15,
+        "boost": 0.8
+    }, {
+        "x": 700,
+        "y": 0,
+        "width": 250,
+        "height": 50,
+        "type": "0"
+    }],
+	"decorations": [{
+		"x": 45,
+		"y": -55,
+		"width": 30,
+		"height": 30,
+		"color": "#ccff3377"
+	}],
+	"texts": []
+}

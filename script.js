@@ -28,6 +28,10 @@ G.scene = "m";
 G.ctx = canvas.getContext("2d");
 G.ctx.fillStyle = "white";
 G.ctx.fillRect(0, 0, 800, 600);
+G.terminal = {};
+G.terminal.x = 6;
+G.terminal.y = 25;
+G.terminal.vx = 0.4;
 G.offset = {};
 G.offset.x = 0;
 G.offset.y = 0;
@@ -53,12 +57,14 @@ G.deco = [];
 G.texts = [];
 
 class Platform {
-    constructor(x, y, width, height, type) {
+    constructor(x, y, width, height, type, power, boost) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.type = type;
+        this.power = power;
+        this.boost = boost;
     }
 }
 class Rect {
@@ -82,8 +88,8 @@ class GameText {
 }
 async function FetchFile(file) {
     try {
-    let res = await fetch(file);
-    return await res.json();
+        let res = await fetch(file);
+        return await res.json();
     } catch (err) {
         console.log(err.stack);
         console.log("ERROR FROM FetchFile");
@@ -103,8 +109,8 @@ function CollisionDirection(root, object) {
 
     //Return closest side
     if (
-        t_collision == b_collision || 
-        t_collision == l_collision || 
+        t_collision == b_collision ||
+        t_collision == l_collision ||
         t_collision == r_collision ||
         b_collision == l_collision ||
         b_collision == r_collision ||
@@ -196,7 +202,7 @@ function LoadLevel(levelid) {
     G.character.collider.width = G.leveldata.character.width;
     G.character.collider.height = G.leveldata.character.height;
     for (const object of G.leveldata.objects) {
-        G.objects.push(new Platform(object.x, object.y, object.width, object.height, object.type));
+        G.objects.push(new Platform(object.x, object.y, object.width, object.height, object.type, object.power, object.boost));
     }
     for (const deco of G.leveldata.decorations) {
         G.deco.push(new Rect(deco.x, deco.y, deco.width, deco.height, deco.color));
@@ -222,30 +228,30 @@ async function FetchLevel(file, pack, level) {
 async function FetchLevels() {
     //Fetch all levels from levels.json
     try {
-    let levels = await FetchFile("./levels.json?r=" + Math.random());
-    G.levels = levels;
-    G.levelCount = 1;
-    G.levelsLoaded = 0;
-    for (const pack of G.levels) G.levelCount += pack.levels.length - 1;
-    const version = await FetchFile("./version.json?r=" + Math.random());
-    G.version = version.version;
-    G.levelsLoaded += 1;
-    for (let x = 0; x < G.levels.length; x++) {
-        pack = G.levels[x];
-        for (let y = 0; y < pack.levels.length; y++) {
-            level = pack.levels[y];
-            if (level.gg == true) {
-                continue;
+        let levels = await FetchFile("./levels.json?r=" + Math.random());
+        G.levels = levels;
+        G.levelCount = 1;
+        G.levelsLoaded = 0;
+        for (const pack of G.levels) G.levelCount += pack.levels.length - 1;
+        const version = await FetchFile("./version.json?r=" + Math.random());
+        G.version = version.version;
+        G.levelsLoaded += 1;
+        for (let x = 0; x < G.levels.length; x++) {
+            pack = G.levels[x];
+            for (let y = 0; y < pack.levels.length; y++) {
+                level = pack.levels[y];
+                if (level.gg == true) {
+                    continue;
+                }
+                FetchLevel(level.file, x, y);
             }
-            FetchLevel(level.file, x, y);
         }
-    }
-    G.loadCheck = setInterval(function() {
-        if (G.levelsLoaded == G.levelCount) {
-            loaded = true;
-            clearInterval(G.loadCheck);
-        }
-    }, 100);
+        G.loadCheck = setInterval(function () {
+            if (G.levelsLoaded == G.levelCount) {
+                loaded = true;
+                clearInterval(G.loadCheck);
+            }
+        }, 100);
     } catch (err) {
         console.log(err.stack);
         console.log("ERROR FROM FetchLevels");
@@ -305,7 +311,7 @@ function Draw() {
             G.ctx.fillStyle = "black";
             if (G.bestTimes[G.levels[G.pack].id] == undefined) {
                 G.ctx.fillText("N/A", 600, 500);
-            } else{
+            } else {
                 G.ctx.fillText(G.bestTimes[G.levels[G.pack].id].toFixed(2) + "s", 600, 500);
             }
         } else {
@@ -318,14 +324,28 @@ function Draw() {
             }
             G.ctx.textBaseline = "alphabetical";
         }
-    //Draw game
+        //Draw game
     } if (G.scene == "g") {
         G.ctx.fillStyle = "#ffffff";
         G.ctx.fillRect(0, 0, 1200, 700);
         G.ctx.fillStyle = "#000000";
-        G.ctx.fillRect(600 - (G.character.width/2), 350 - (G.character.height/2), G.character.width, G.character.height);
+        G.ctx.fillRect(600 - (G.character.width / 2), 350 - (G.character.height / 2), G.character.width, G.character.height);
         for (const platform of G.objects) {
             G.ctx.fillStyle = G.colors[platform.type];
+            if (platform.type == 4) {
+                gval = parseInt(Math.min(platform.power * 12, 255)).toString(16);
+                if (gval.length == 1) gval = "0" + gval;
+                bval = parseInt(Math.min(platform.power * 20, 255)).toString(16);
+                if (bval.length == 1) bval = "0" + bval;
+                G.ctx.fillStyle = "#33" + gval + bval;
+            }
+            if (platform.type == 8) {
+                rval = parseInt(Math.min((platform.boost - 0.2) * 300, 255)).toString(16);
+                if (rval.length == 1) rval = "0" + rval;
+                bval = parseInt(Math.min((platform.power - 2) * 25, 255)).toString(16);
+                if (bval.length == 1) bval = "0" + bval;
+                G.ctx.fillStyle = `#${rval}33${bval}`;
+            }
             G.ctx.fillRect(platform.x + G.offset.x, platform.y + G.offset.y, platform.width, platform.height);
         }
         for (const deco of G.deco) {
@@ -352,7 +372,7 @@ function Draw() {
         G.ctx.fillText(G.levels[G.pack].name + " - " + G.levels[G.pack].levels[G.level].name + " - " + (G.level + 1) + "/" + (G.levels[G.pack].levels.length - 1), 1190, 20);
         G.ctx.textAlign = "left";
         G.ctx.textBaseline = "alphabetic"
-    //Draw end screen
+        //Draw end screen
     } if (G.scene == "e") {
         G.ctx.fillStyle = "#eeffee";
         G.ctx.fillRect(0, 0, 1200, 700);
@@ -449,10 +469,10 @@ document.addEventListener('keyup', function (event) {
 });
 function Movement() {
     //Change character velocity
-    if (G.keys.left && G.character.vx > -6) {
-        G.character.vx -= 0.4;
-    } if (G.keys.right && G.character.vx < 6) {
-        G.character.vx += 0.4;
+    if (G.keys.left && G.character.vx > -G.terminal.x) {
+        G.character.vx -= G.terminal.vx;
+    } if (G.keys.right && G.character.vx < G.terminal.x) {
+        G.character.vx += G.terminal.vx;
     }
     if (G.character.vx < 0) {
         G.character.vx = Math.min(G.character.vx + 0.2, 0);
@@ -478,6 +498,8 @@ function Main() {
             const direction = CollisionDirection(G.character.collider, collision);
             if (direction == "t") {
                 G.jumps = 0;
+                G.terminal.x = 6;
+                G.terminal.vx = 0.4;
             }
             //Do stuff depending on object type
             if (collision.type == 3) {
@@ -491,14 +513,23 @@ function Main() {
                 G.jumps = 1;
             } if (collision.type == 5 && direction == "t") {
                 G.jumps = 2;
-            } if (collision.type == 4 && direction == "t") {
-                G.character.vy += collision.power;
             } if (collision.type == 2 && G.character.vy > 4 && direction == "t") {
                 bounceSound.play();
                 G.character.vy = -G.character.vy * 0.65;
                 collide = false;
             } if (collision.type == 6 && direction == "t") {
                 G.jumps = 3;
+            } if (collision.type == 4 && direction == "t") {
+                jumpsound += 1;
+                if (jumpsound > 2) {
+                    jumpsound = 0;
+                }
+                jumpSounds[jumpsound].play();
+                G.character.vy = -collision.power;
+                collide = false;
+            } if (collision.type == 8 && direction == "t") {
+                G.terminal.x = collision.power;
+                G.terminal.vx = collision.boost;
             } if (collision.type == 9) {
                 //Game finished
                 winSound.play();
@@ -521,7 +552,7 @@ function Main() {
                             G.record = true;
                             window.localStorage.setItem("bestTimes", JSON.stringify(G.bestTimes));
                         }
-                    }  
+                    }
                 } else {
                     LoadLevel(G.levels[G.pack].levels[G.level].id);
                 }
@@ -533,7 +564,7 @@ function Main() {
                 collide = false;
             }
             if (collide) {
-                
+
                 if (direction == "t") {
                     G.character.y = collision.y - G.character.height;
                     G.character.vy = 0;
@@ -553,11 +584,9 @@ function Main() {
     G.character.x += G.character.vx;
     G.character.y += G.character.vy;
     G.character.vy += 0.25;
-    if (G.character.vy > 25) {
-        G.character.vy = 25
-    }
-    G.offset.x = Math.round(-G.character.x + 1200/2 - G.character.width/2);
-    G.offset.y = Math.round(-G.character.y + 700/2 - G.character.height/2);
+    G.character.vy = Math.min(G.character.vy, G.terminal.y);
+    G.offset.x = Math.round(-G.character.x + 1200 / 2 - G.character.width / 2);
+    G.offset.y = Math.round(-G.character.y + 700 / 2 - G.character.height / 2);
     Draw();
 }
 const drawScreen = setInterval(function () {

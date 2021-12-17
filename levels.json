@@ -142,7 +142,7 @@
     {
         "name": "Journey",
         "id": "journey",
-        "difficulty": 3,
+        "difficulty": 2,
         "levels": [
             {
                 "name": "A Fork in the Road",
