@@ -96,14 +96,14 @@ async function FetchFile(file) {
     }
 }
 function CollisionDirection(object) {
-    const root = G.character;
+    const root = G.character.collider;
     //Get distances from each side
-    var root_bottom = root.y + root.height;
+    var root_bottom = (root.y - 0.25) + root.height;
     var object_bottom = object.y + object.height;
     var root_right = root.x + root.width;
     var object_right = object.x + object.width;
 
-    var b_collision = object_bottom - root.y;
+    var b_collision = object_bottom - (root.y - 0.25);
     var t_collision = root_bottom - object.y;
     var l_collision = root_right - object.x;
     var r_collision = object_right - root.x;
