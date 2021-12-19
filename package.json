@@ -1,0 +1,79 @@
+{
+  "name": "just-another-platformer",
+  "version": "0.6.7",
+  "description": "platformer game",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EpicPuppy613/Just-Another-Platformer.git"
+  },
+  "author": "EpicPuppy613",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EpicPuppy613/Just-Another-Platformer/issues"
+  },
+  "homepage": "https://github.com/EpicPuppy613/Just-Another-Platformer#readme",
+  "devDependencies": {
+    "@electron-forge/cli": "^6.0.0-beta.61",
+    "@electron-forge/maker-deb": "^6.0.0-beta.61",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.61",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.61",
+    "@electron-forge/maker-zip": "^6.0.0-beta.61",
+    "electron": "^17.0.0-alpha.5"
+  },
+  "build": {
+    "extraResources": [
+      {
+        "from": "./src/levels",
+        "to": "levels",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "./src/",
+        "to": "",
+        "filter": [
+          "version.json"
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.0"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {
+        "icon": "./icon32x32.ico"
+      },
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "just_another_platformer"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ]
+    }
+  }
+}
