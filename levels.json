@@ -175,31 +175,6 @@
         ]
     },
     {
-        "name": "Logic",
-        "id": "logic",
-        "difficulty": 3,
-        "levels": [
-            {
-                "name": "The Choice",
-                "id": "logic1",
-                "file": "levels/logic/1.json"
-            },
-            {
-                "name": "Unfamilliar Blocks",
-                "id": "logic2",
-                "file": "levels/logic/2.json"
-            },
-            {
-                "name": "Speed Bounce",
-                "id": "logic3",
-                "file": "levels/logic/3.json"
-            },
-            {
-                "gg": true
-            }
-        ]
-    },
-    {
         "name": "Torture",
         "id": "torture",
         "difficulty": 4,
