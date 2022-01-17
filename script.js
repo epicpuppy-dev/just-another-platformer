@@ -226,53 +226,132 @@ async function FetchLevel(file, pack, level) {
         return;
     }
     G.levels[pack].levels[level].level = data;
+    const index = G.filesLoading.indexOf(file);
+    if (index > -1) {
+        G.filesLoading.splice(index, 1);
+    }
     G.levelsLoaded++;
 }
 async function FetchLevels() {
     //Fetch all levels from levels.json
     try {
 
+        G.levelsLoaded = 0;
+        G.filesLoading = [
+            'textures/texture_goal.png',
+            'textures/texture_jump_1.png',
+            'textures/texture_jump_2.png',
+            'textures/texture_jump_3.png',
+            'textures/texture_lava.png',
+            'textures/texture_bounce.png',
+            'textures/texture_bounce_jump.png',
+            'textures/texture_bounce_pad.png',
+            'textures/texture_boost.png'
+        ];
         //Load images
         const imageGoal = new Image();
         imageGoal.onload = function () {
-            G.textureGoal = G.ctx.createPattern(imageGoal, "repeat");
+            G.textureGoal = G.ctx.createPattern(this, "repeat");
+            const index = G.filesLoading.indexOf(this.src);
+            if (index > -1) {
+                G.filesLoading.splice(index, 1);
+            }
             G.levelsLoaded++;
         }
         imageGoal.src = "textures/texture_goal.png";
 
         const imageJump1 = new Image();
         imageJump1.onload = function () {
-            G.textureJump1 = G.ctx.createPattern(imageJump1, "repeat");
+            G.textureJump1 = G.ctx.createPattern(this, "repeat");
+            const index = G.filesLoading.indexOf(this.src);
+            if (index > -1) {
+                G.filesLoading.splice(index, 1);
+            }
             G.levelsLoaded++;
         }
         imageJump1.src = "textures/texture_jump_1.png";
 
         const imageJump2 = new Image();
         imageJump2.onload = function () {
-            G.textureJump2 = G.ctx.createPattern(imageJump2, "repeat");
+            G.textureJump2 = G.ctx.createPattern(this, "repeat");
+            const index = G.filesLoading.indexOf(this.src);
+            if (index > -1) {
+                G.filesLoading.splice(index, 1);
+            }
             G.levelsLoaded++;
         }
         imageJump2.src = "textures/texture_jump_2.png";
 
         const imageJump3 = new Image();
         imageJump3.onload = function () {
-            G.textureJump3 = G.ctx.createPattern(imageJump3, "repeat");
+            G.textureJump3 = G.ctx.createPattern(this, "repeat");
+            const index = G.filesLoading.indexOf(this.src);
+            if (index > -1) {
+                G.filesLoading.splice(index, 1);
+            }
             G.levelsLoaded++;
         }
         imageJump3.src = "textures/texture_jump_3.png";
 
         const imageLava = new Image();
         imageLava.onload = function () {
-            G.textureLava = G.ctx.createPattern(imageLava, "repeat");
+            G.textureLava = G.ctx.createPattern(this, "repeat");
+            const index = G.filesLoading.indexOf(this.src);
+            if (index > -1) {
+                G.filesLoading.splice(index, 1);
+            }
             G.levelsLoaded++;
         }
         imageLava.src = "textures/texture_lava.png";
 
+        const imageBounce = new Image();
+        imageBounce.onload = function () {
+            G.textureBounce = G.ctx.createPattern(this, "repeat");
+            const index = G.filesLoading.indexOf(this.src);
+            if (index > -1) {
+                G.filesLoading.splice(index, 1);
+            }
+            G.levelsLoaded++;
+        }
+        imageBounce.src = "textures/texture_bounce.png";
+
+        const imageBounceJump = new Image();
+        imageBounceJump.onload = function () {
+            G.textureBounceJump = G.ctx.createPattern(this, "repeat");
+            const index = G.filesLoading.indexOf(this.src);
+            if (index > -1) {
+                G.filesLoading.splice(index, 1);
+            }
+            G.levelsLoaded++;
+        }
+        imageBounceJump.src = "textures/texture_bounce_jump.png";
+
+        const imageBouncePad = new Image();
+        imageBouncePad.onload = function () {
+            G.textureBouncePad = G.ctx.createPattern(this, "repeat");
+            const index = G.filesLoading.indexOf(this.src);
+            if (index > -1) {
+                G.filesLoading.splice(index, 1);
+            }
+            G.levelsLoaded++;
+        }
+        imageBouncePad.src = "textures/texture_bounce_pad.png";
+
+        const imageBoost = new Image();
+        imageBoost.onload = function () {
+            G.textureBoost = G.ctx.createPattern(this, "repeat");
+            const index = G.filesLoading.indexOf(this.src);
+            if (index > -1) {
+                G.filesLoading.splice(index, 1);
+            }
+            G.levelsLoaded++;
+        }
+        imageBoost.src = "textures/texture_boost.png";
+
         //Load levels
         let levels = await FetchFile("./levels.json?r=" + Math.random());
         G.levels = levels;
-        G.levelCount = 6;
-        G.levelsLoaded = 0;
+        G.levelCount = 10;
         for (const pack of G.levels) G.levelCount += pack.levels.length - 1;
         const version = await FetchFile("./version.json?r=" + Math.random());
         G.version = version.version;
@@ -284,25 +363,32 @@ async function FetchLevels() {
                 if (level.gg == true) {
                     continue;
                 }
+                G.filesLoading.push(level.file);
                 FetchLevel(level.file, x, y);
             }
         }
+        G.loadTicks = 0
         G.loadCheck = setInterval(function () {
             if (G.levelsLoaded == G.levelCount) {
                 loaded = true;
                 G.textureMap = [
                     null, //0: Normal
                     G.textureJump1, //1: Jump
-                    null, //2: Bounce
+                    G.textureBounce, //2: Bounce
                     G.textureLava, //3: Lava
-                    null, //4: Bounce Pad
+                    G.textureBouncePad, //4: Bounce Pad
                     G.textureJump2, //5: Double Jump
                     G.textureJump3, //6: Triple Jump
-                    null, //7: Jump Bounce Pad
-                    null, //8: None
+                    G.textureBounceJump, //7: Jump Bounce Pad
+                    G.textureBoost, //8: Boost
                     G.textureGoal //9: Goal
                 ]
                 clearInterval(G.loadCheck);
+            }
+            G.loadTicks++;
+            if (G.loadTicks == 100) {
+                console.log(G.levels);
+                console.log(G.filesLoading);
             }
         }, 100);
     } catch (err) {
