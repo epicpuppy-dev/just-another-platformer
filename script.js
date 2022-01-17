@@ -231,9 +231,47 @@ async function FetchLevel(file, pack, level) {
 async function FetchLevels() {
     //Fetch all levels from levels.json
     try {
+
+        //Load images
+        const imageGoal = new Image();
+        imageGoal.onload = function () {
+            G.textureGoal = G.ctx.createPattern(imageGoal, "repeat");
+            G.levelsLoaded++;
+        }
+        imageGoal.src = "textures/texture_goal.png";
+
+        const imageJump1 = new Image();
+        imageJump1.onload = function () {
+            G.textureJump1 = G.ctx.createPattern(imageJump1, "repeat");
+            G.levelsLoaded++;
+        }
+        imageJump1.src = "textures/texture_jump_1.png";
+
+        const imageJump2 = new Image();
+        imageJump2.onload = function () {
+            G.textureJump2 = G.ctx.createPattern(imageJump2, "repeat");
+            G.levelsLoaded++;
+        }
+        imageJump2.src = "textures/texture_jump_2.png";
+
+        const imageJump3 = new Image();
+        imageJump3.onload = function () {
+            G.textureJump3 = G.ctx.createPattern(imageJump3, "repeat");
+            G.levelsLoaded++;
+        }
+        imageJump3.src = "textures/texture_jump_3.png";
+
+        const imageLava = new Image();
+        imageLava.onload = function () {
+            G.textureLava = G.ctx.createPattern(imageLava, "repeat");
+            G.levelsLoaded++;
+        }
+        imageLava.src = "textures/texture_lava.png";
+
+        //Load levels
         let levels = await FetchFile("./levels.json?r=" + Math.random());
         G.levels = levels;
-        G.levelCount = 1;
+        G.levelCount = 6;
         G.levelsLoaded = 0;
         for (const pack of G.levels) G.levelCount += pack.levels.length - 1;
         const version = await FetchFile("./version.json?r=" + Math.random());
@@ -252,6 +290,18 @@ async function FetchLevels() {
         G.loadCheck = setInterval(function () {
             if (G.levelsLoaded == G.levelCount) {
                 loaded = true;
+                G.textureMap = [
+                    null, //0: Normal
+                    G.textureJump1, //1: Jump
+                    null, //2: Bounce
+                    G.textureLava, //3: Lava
+                    null, //4: Bounce Pad
+                    G.textureJump2, //5: Double Jump
+                    G.textureJump3, //6: Triple Jump
+                    null, //7: Jump Bounce Pad
+                    null, //8: None
+                    G.textureGoal //9: Goal
+                ]
                 clearInterval(G.loadCheck);
             }
         }, 100);
@@ -261,25 +311,6 @@ async function FetchLevels() {
     }
 }
 FetchLevels();
-G.colors = [
-    "#444444", //0: Normal
-    "#666644", //1: Jump
-    "#44aa44", //2: Bounce
-    "#ee2222", //3: Lava
-    "#44aaee", //4: Bounce Pad
-    "#aaaa44", //5: Double Jump
-    "#eeee44", //6: Triple Jump
-    "#88aa44", //7: Jump Bounce Pad
-    "", //8: None
-    "#44ff44" //9: Goal
-];
-G.difficultyColors = [
-    "#44dddd", //0
-    "#44dd44", //1
-    "#dddd44", //2
-    "#ee8844", //3
-    "#dd4444", //4
-]
 //Detect key pressed
 document.addEventListener('keydown', function (event) {
     //If in menu

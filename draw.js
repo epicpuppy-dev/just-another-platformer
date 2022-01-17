@@ -1,3 +1,36 @@
+G.colors = [
+    "#444444", //0: Normal
+    "#666644", //1: Jump
+    "#44aa44", //2: Bounce
+    "#ee2222", //3: Lava
+    "#44aaee", //4: Bounce Pad
+    "#aaaa44", //5: Double Jump
+    "#eeee44", //6: Triple Jump
+    "#88aa44", //7: Jump Bounce Pad
+    "", //8: None
+    "#44ff44" //9: Goal
+];
+G.difficultyColors = [
+    "#44dddd", //0
+    "#44dd44", //1
+    "#dddd44", //2
+    "#ee8844", //3
+    "#dd4444", //4
+];
+G.textureMap = [
+    null, //0: Normal
+    null, //1: Jump
+    null, //2: Bounce
+    null, //3: Lava
+    null, //4: Bounce Pad
+    null, //5: Double Jump
+    null, //6: Triple Jump
+    null, //7: Jump Bounce Pad
+    null, //8: None
+    null //9: Goal
+]
+G.platformTexture = false;
+
 function Draw() {
 
     //Draw Menu ('m')
@@ -65,9 +98,19 @@ function Draw() {
         //Draw Character
         G.ctx.fillStyle = "#000000";
         G.ctx.fillRect(600 - (G.character.width / 2), 350 - (G.character.height / 2), G.character.width, G.character.height);
+        //Configure pattern offset
+        var translation = new DOMMatrix([1,0,0,1,0,0])
+                .translateSelf(G.offset.x, G.offset.y);
         //Draw Platforms
         for (const platform of G.objects) {
-            G.ctx.fillStyle = G.colors[platform.type];
+            if (G.textureMap[platform.type] !== null) {
+                G.ctx.fillStyle = G.textureMap[platform.type];
+                G.ctx.fillStyle.setTransform(translation);
+            G.platformTexture = true;
+            } else {
+                G.ctx.fillStyle = G.colors[platform.type];
+                G.platformTexture = false;
+            }
             //Dynamic Platform Colors
             if (platform.type == 4) {
                 gval = parseInt(Math.min(platform.power * 12, 255)).toString(16);
@@ -85,6 +128,12 @@ function Draw() {
             }
             //Draw Platform Rect
             G.ctx.fillRect(platform.x + G.offset.x, platform.y + G.offset.y, platform.width, platform.height);
+            if (G.platformTexture) {
+                G.ctx.globalCompositeOperation = "multiply";
+                G.ctx.fillStyle = G.colors[platform.type];
+                G.ctx.fillRect(platform.x + G.offset.x, platform.y + G.offset.y, platform.width, platform.height);
+                G.ctx.globalCompositeOperation = "source-over";
+            }
         }
         //Draw Decorations
         for (const deco of G.deco) {
