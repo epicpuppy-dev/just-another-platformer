@@ -5,7 +5,8 @@ l: level select
 g: game
 e: end screen
 t: leaderboards*
-c: settings*
+c: settings
+cr: rebind controls*
 r: register*
 s: sign in*
 */
@@ -14,12 +15,12 @@ s: sign in*
 const canvas = document.getElementById("main");
 
 //Load sounds
-const winSound = new Audio("sounds/win.wav");
-const jumpSoundA = new Audio("sounds/jump.wav");
-const jumpSoundB = new Audio("sounds/jump.wav");
-const jumpSoundC = new Audio("sounds/jump.wav");
-const bounceSound = new Audio("sounds/bounce.wav");
-const dieSound = new Audio("sounds/die.wav");
+const winSound = new Audio("assets/sounds/win.wav");
+const jumpSoundA = new Audio("assets/sounds/jump.wav");
+const jumpSoundB = new Audio("assets/sounds/jump.wav");
+const jumpSoundC = new Audio("assets/sounds/jump.wav");
+const bounceSound = new Audio("assets/sounds/bounce.wav");
+const dieSound = new Audio("assets/sounds/die.wav");
 const jumpSounds = [jumpSoundA, jumpSoundB, jumpSoundC];
 var jumpsound = 0;
 var loaded = false;
@@ -33,6 +34,10 @@ G.level = 0;
 G.playing = false;
 G.timer = 0;
 G.offline = false;
+G.ac = 0;
+G.crerror = false;
+G.crcooldown = 0;
+G.bind = -1;
 G.scene = "m";
 G.nav = 0;
 G.signedin = false;
@@ -81,17 +86,17 @@ if (G.signedin === null) {
 }
 G.bindings = JSON.parse(window.localStorage.getItem("controls"));
 if (G.bindings === null) {
-    UpdateBindings("ArrowRight", "ArrowLeft", "Space", "Escape", "KeyR");
+    G.bindings = {
+        left: "ArrowLeft",
+        right: "ArrowRight",
+        jump: "Space",
+        quit: "Escape",
+        retry: "KeyR"
+    }
+    SaveBindings();
 }
 G.player = {};
-function UpdateBindings(right, left, jump, quit, retry) {
-    G.bindings = {
-        right: right,
-        left: left,
-        jump: jump,
-        quit: quit,
-        retry: retry
-    }
+function SaveBindings() {
     window.localStorage.setItem("controls", JSON.stringify(G.bindings));
 }
 G.bestTimes = {};
@@ -156,21 +161,11 @@ function CollisionDirection(object) {
         b_collision == l_collision ||
         b_collision == r_collision ||
         l_collision == r_collision
-    ) {
-        return;
-    }
-    if (t_collision < b_collision && t_collision < l_collision && t_collision < r_collision) {
-        return "t";
-    }
-    if (b_collision < t_collision && b_collision < l_collision && b_collision < r_collision) {
-        return "b";
-    }
-    if (l_collision < r_collision && l_collision < t_collision && l_collision < b_collision) {
-        return "l";
-    }
-    if (r_collision < l_collision && r_collision < t_collision && r_collision < b_collision) {
-        return "r";
-    }
+    ) return;
+    if (t_collision < b_collision && t_collision < l_collision && t_collision < r_collision) return "t";
+    if (b_collision < t_collision && b_collision < l_collision && b_collision < r_collision) return "b";
+    if (l_collision < r_collision && l_collision < t_collision && l_collision < b_collision) return "l";
+    if (r_collision < l_collision && r_collision < t_collision && r_collision < b_collision) return "r";
     return;
 }
 function IsCollision(root, object) {
@@ -278,7 +273,7 @@ async function FetchImage(file, name) {
         G["texture" + name] = G.ctx.createPattern(this, "repeat");
         G.levelsLoaded++;
     }
-    image.src = "textures/texture_goal.png";
+    image.src = file;
 }
 async function FetchLevels() {
     //Fetch all levels from levels.json
@@ -289,16 +284,16 @@ async function FetchLevels() {
         G.filesLoading = [];
         //Load images
         G.levelCount += 10;
-        FetchImage("textures/texture_goal.png", "Goal");
-        FetchImage("textures/texture_jump_1.png", "Jump1");
-        FetchImage("textures/texture_jump_2.png", "Jump2");
-        FetchImage("textures/texture_jump_3.png", "Jump3");
-        FetchImage("textures/texture_bounce.png", "Bounce");
-        FetchImage("textures/texture_bounce_jump.png", "BounceJump");
-        FetchImage("textures/texture_lava.png", "Lava");
-        FetchImage("textures/texture_jump_1.png", "Jump1");
-        FetchImage("textures/texture_bounce_pad.png", "BouncePad");
-        FetchImage("textures/texture_boost.png", "Boost");
+        FetchImage("assets/img/texture_goal.png", "Goal");
+        FetchImage("assets/img/texture_jump_1.png", "Jump1");
+        FetchImage("assets/img/texture_jump_2.png", "Jump2");
+        FetchImage("assets/img/texture_jump_3.png", "Jump3");
+        FetchImage("assets/img/texture_bounce.png", "Bounce");
+        FetchImage("assets/img/texture_bounce_jump.png", "BounceJump");
+        FetchImage("assets/img/texture_lava.png", "Lava");
+        FetchImage("assets/img/texture_jump_1.png", "Jump1");
+        FetchImage("assets/img/texture_bounce_pad.png", "BouncePad");
+        FetchImage("assets/img/texture_boost.png", "Boost");
 
         G.levelCount += 2;
         G.authRequest = {};
@@ -328,7 +323,7 @@ async function FetchLevels() {
                         if (result.Data.bestTimes === undefined) {
                             G.bestTimes = {};
                         } else {
-                            G.bestTimes = result.Data.bestTimes.Value;
+                            G.bestTimes = JSON.parse(result.Data.bestTimes.Value);
                         }
                         G.levelsLoaded++;
                     }
@@ -385,12 +380,21 @@ async function FetchLevels() {
     }
 }
 FetchLevels();
+G.binds = [
+    "left",
+    "right",
+    "jump",
+    "quit",
+    "retry"
+]
 //Detect key pressed
 document.addEventListener('keydown', function (event) {
     //If in menu
     if (G.scene == "m" && loaded) {
         if (event.code == G.bindings.jump) {
+            //Submenu switcher
             if (G.nav == 0) G.scene = "l";
+            if (G.nav == 1) {G.scene = "c"; G.nav = 0;}
         }
         if (event.code == G.bindings.right && !G.offline) G.nav = Math.min(G.nav + 1, 4);
         else if (event.code == G.bindings.right && G.offline) G.nav = Math.min(G.nav + 1, 1);
@@ -418,6 +422,19 @@ document.addEventListener('keydown', function (event) {
                 G.pack = G.levels.length - 1;
             }
         }
+    } else if (G.scene == "c") {
+        if (event.code == G.bindings.quit) {G.scene = "m"; G.nav = 0;}
+        if (event.code == G.bindings.right) G.nav = Math.min(G.nav + 1, 4);
+        if (event.code == G.bindings.left) G.nav = Math.max(G.nav - 1, 0);
+        if (event.code == G.bindings.jump) {G.bind = G.nav; G.scene = "cr";}
+    } else if (G.scene == "cr") {
+        const key = event.code;
+        if (key == G.bindings[G.binds[G.bind]]) {G.scene = "c"; G.bind = -1; return;}
+        for (bind in G.bindings) if (key == G.bindings[bind]) {G.crerror = true; G.crcooldown = 200; return;}
+        G.bindings[G.binds[G.bind]] = key;
+        G.scene = "c";
+        G.bind = -1;
+        SaveBindings();
     }
     if (event.code == G.bindings.left) {
         G.keys.left = true;
@@ -458,6 +475,7 @@ document.addEventListener('keydown', function (event) {
         G.texts = [];
         G.scene = "m";
     }
+    for (const key in G.bindings) if (event.code == G.bindings[key]) event.preventDefault();
 });
 //Key up
 document.addEventListener('keyup', function (event) {
@@ -482,8 +500,10 @@ function Movement() {
     }
 }
 function Main() {
+    G.crcooldown--;
     //Increment timer
     if (G.playing) {
+        G.ac = G.timer;
         G.timer = parseFloat((G.timer + 0.02).toFixed(2));
     }
     //Create character collider where it would be next frame
@@ -553,15 +573,12 @@ function Main() {
                         G.record = true;
                     }
                     var updateRequest = {
-                        Data: { bestTimes: G.bestTimes },
+                        Data: { bestTimes: JSON.stringify(G.bestTimes) },
                         Permission: "public"
                     }
                     PlayFabClientSDK.UpdateUserData(updateRequest, (response, error) => {
                         if (error) {
                             console.log(error);
-                        }
-                        else {
-
                         }
                     });
                 } else {
