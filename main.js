@@ -7,12 +7,12 @@ const createWindow = () => {
         height: 700,
         webPreferences: {
             nodeIntegration: true,
-            preload: path.join(__dirname, 'quit.js')
-        },
-        frame: false
+            preload: path.join(__dirname, 'launchScript.js')
+        }
     });
     win.loadFile('index.html');
     win.removeMenu();
+    win.webContents.openDevTools()
 };
 
 app.whenReady().then(() => {

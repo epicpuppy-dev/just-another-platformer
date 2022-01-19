@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <link rel="icon" href="icon32x32.png">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-    <meta property="og:title" content="Just Another Platformer"/>
-    <meta property="og:type" content="website"/>
-    <meta property="og:url" content="https://platformer.epicpuppy.dev"/>
-    <meta property="og:image" content="https://platformer.epicpuppy.dev/icon32x32.png"/>
-    <meta property="og:description" content="Just another platformer game, like the thousands out there"/>
-    <title>Just Another Platformer</title>
-    <link href="style.css" rel="stylesheet" type="text/css"/>
-  </head>
-  <body>
-    <canvas id="main" height="700" width="1200"></canvas>
-    <script src="script.js"></script>
-  </body>
+    <title>Just Another Launcher</title>
+    <link href="launchStyle.css" rel="stylesheet" type="text/css" />
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+</head>
+
+<body>
+    <button onclick="LaunchGame()" id="game">Game</button>
+    <button onclick="LaunchEditor()">Editor</button>
+    <button onclick="Quit()">Quit</button>
+    <p id="stuff"></p>
+</body>
+
 </html>
