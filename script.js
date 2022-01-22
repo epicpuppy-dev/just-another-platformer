@@ -343,7 +343,7 @@ async function FetchLevels() {
         G.levelCount += 2;
         const levels = await FetchFile("./levels.json?r=" + Math.random());
         G.levels = levels;
-        G.badwords = await FetchFile("./assets/namefilter.txt?r=" + Math.random()).split("\n");
+        G.badwords = await FetchFile("./assets/namefilter.json?r=" + Math.random());
         G.levelsLoaded++;
         for (const pack of G.levels) G.levelCount += pack.levels.length - 1;
         const version = await FetchFile("./version.json?r=" + Math.random());
@@ -700,6 +700,7 @@ function Main() {
     G.crcooldown--;
     //Increment timer
     if (G.playing) {
+        if (G.timer - G.ac != 0.02 && G.timer != 0) window.close();
         G.ac = G.timer;
         G.timer = parseFloat((G.timer + 0.02).toFixed(2));
     }
