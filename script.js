@@ -1,30 +1,54 @@
+/*
+GAME STATES (* = not done)
+m: menu
+l: level select
+g: game
+e: end screen
+t: leaderboards*
+c: settings
+cr: rebind controls
+r: register*
+s: sign in*
+*/
+
 //Get canvas from html
 const canvas = document.getElementById("main");
 
 //Load sounds
-const winSound = new Audio("sounds/win.wav");
-const jumpSoundA = new Audio("sounds/jump.wav");
-const jumpSoundB = new Audio("sounds/jump.wav");
-const jumpSoundC = new Audio("sounds/jump.wav");
-const bounceSound = new Audio("sounds/bounce.wav");
-const dieSound = new Audio("sounds/die.wav");
+const winSound = new Audio("assets/sounds/win.wav");
+const jumpSoundA = new Audio("assets/sounds/jump.wav");
+const jumpSoundB = new Audio("assets/sounds/jump.wav");
+const jumpSoundC = new Audio("assets/sounds/jump.wav");
+const bounceSound = new Audio("assets/sounds/bounce.wav");
+const dieSound = new Audio("assets/sounds/die.wav");
 const jumpSounds = [jumpSoundA, jumpSoundB, jumpSoundC];
 var jumpsound = 0;
 var loaded = false;
 
 //Define game
-G = {}
-G.bestTimes = JSON.parse(window.localStorage.getItem("bestTimes"));
-if (G.bestTimes == null) {
-    G.bestTimes = {};
-}
+G = {};
 G.levelCount = 0;
 G.record = false;
 G.pack = 0;
 G.level = 0;
 G.playing = false;
 G.timer = 0;
+G.offline = false;
+G.ac = 0;
+G.crerror = false;
+G.crcooldown = 0;
+G.bind = -1;
 G.scene = "m";
+G.regname = /\w/;
+G.regpass = /\w|[!@#$%^&*+=]/;
+G.regmail = /\w|[!@#$%^&*+=.]/;
+G.password = "";
+G.username = "";
+G.confirm = "";
+G.email = "";
+G.rerror = "";
+G.nav = 0;
+G.signedin = false;
 G.ctx = canvas.getContext("2d");
 G.ctx.fillStyle = "white";
 G.ctx.fillRect(0, 0, 800, 600);
@@ -55,6 +79,35 @@ G.keys.right = false;
 G.objects = [];
 G.deco = [];
 G.texts = [];
+PlayFab.settings.titleId = 68593;
+G.GUID = window.localStorage.getItem("guid");
+G.newUser = false;
+if (G.GUID === null) {
+    G.GUID = crypto.randomUUID()
+    window.localStorage.setItem("guid", G.GUID);
+    G.newUser = true;
+}
+G.signedin = JSON.parse(window.localStorage.getItem("signedin"));
+if (G.signedin === null) {
+    G.signedin = false;
+    window.localStorage.setItem("signedin", JSON.stringify(G.signedin));
+}
+G.bindings = JSON.parse(window.localStorage.getItem("controls"));
+if (G.bindings === null) {
+    G.bindings = {
+        left: "ArrowLeft",
+        right: "ArrowRight",
+        jump: "Space",
+        quit: "Escape",
+        retry: "KeyR"
+    }
+    SaveBindings();
+}
+G.player = {};
+function SaveBindings() {
+    window.localStorage.setItem("controls", JSON.stringify(G.bindings));
+}
+G.bestTimes = {};
 
 class Platform {
     constructor(x, y, width, height, type, power, boost) {
@@ -116,21 +169,11 @@ function CollisionDirection(object) {
         b_collision == l_collision ||
         b_collision == r_collision ||
         l_collision == r_collision
-    ) {
-        return;
-    }
-    if (t_collision < b_collision && t_collision < l_collision && t_collision < r_collision) {
-        return "t";
-    }
-    if (b_collision < t_collision && b_collision < l_collision && b_collision < r_collision) {
-        return "b";
-    }
-    if (l_collision < r_collision && l_collision < t_collision && l_collision < b_collision) {
-        return "l";
-    }
-    if (r_collision < l_collision && r_collision < t_collision && r_collision < b_collision) {
-        return "r";
-    }
+    ) return;
+    if (t_collision < b_collision && t_collision < l_collision && t_collision < r_collision) return "t";
+    if (b_collision < t_collision && b_collision < l_collision && b_collision < r_collision) return "b";
+    if (l_collision < r_collision && l_collision < t_collision && l_collision < b_collision) return "l";
+    if (r_collision < l_collision && r_collision < t_collision && r_collision < b_collision) return "r";
     return;
 }
 function IsCollision(root, object) {
@@ -232,130 +275,78 @@ async function FetchLevel(file, pack, level) {
     }
     G.levelsLoaded++;
 }
+async function FetchImage(file, name) {
+    const image = new Image();
+    image.onload = function () {
+        G["texture" + name] = G.ctx.createPattern(this, "repeat");
+        G.levelsLoaded++;
+    }
+    image.src = file;
+}
 async function FetchLevels() {
     //Fetch all levels from levels.json
     try {
 
         G.levelsLoaded = 0;
-        G.filesLoading = [
-            'textures/texture_goal.png',
-            'textures/texture_jump_1.png',
-            'textures/texture_jump_2.png',
-            'textures/texture_jump_3.png',
-            'textures/texture_lava.png',
-            'textures/texture_bounce.png',
-            'textures/texture_bounce_jump.png',
-            'textures/texture_bounce_pad.png',
-            'textures/texture_boost.png'
-        ];
+        G.levelCount = 0;
+        G.filesLoading = [];
         //Load images
-        const imageGoal = new Image();
-        imageGoal.onload = function () {
-            G.textureGoal = G.ctx.createPattern(this, "repeat");
-            const index = G.filesLoading.indexOf(this.src);
-            if (index > -1) {
-                G.filesLoading.splice(index, 1);
-            }
-            G.levelsLoaded++;
-        }
-        imageGoal.src = "textures/texture_goal.png";
+        G.levelCount += 10;
+        FetchImage("assets/img/texture_goal.png", "Goal");
+        FetchImage("assets/img/texture_jump_1.png", "Jump1");
+        FetchImage("assets/img/texture_jump_2.png", "Jump2");
+        FetchImage("assets/img/texture_jump_3.png", "Jump3");
+        FetchImage("assets/img/texture_bounce.png", "Bounce");
+        FetchImage("assets/img/texture_bounce_jump.png", "BounceJump");
+        FetchImage("assets/img/texture_lava.png", "Lava");
+        FetchImage("assets/img/texture_jump_1.png", "Jump1");
+        FetchImage("assets/img/texture_bounce_pad.png", "BouncePad");
+        FetchImage("assets/img/texture_boost.png", "Boost");
 
-        const imageJump1 = new Image();
-        imageJump1.onload = function () {
-            G.textureJump1 = G.ctx.createPattern(this, "repeat");
-            const index = G.filesLoading.indexOf(this.src);
-            if (index > -1) {
-                G.filesLoading.splice(index, 1);
+        G.levelCount += 2;
+        G.authRequest = {};
+        G.authRequest.TitleId = PlayFab.settings.titleId;
+        G.authRequest.CustomId = G.GUID;
+        if (G.newUser) G.authRequest.CreateAccount = true;
+        else G.authRequest.CreateAccount = false;
+        PlayFabClientSDK.LoginWithCustomID(G.authRequest, (response, error) => {
+            if (error) {
+                console.error(error)
+                G.offline = true;
+                G.levelsLoaded += 2;
             }
-            G.levelsLoaded++;
-        }
-        imageJump1.src = "textures/texture_jump_1.png";
+            else {
+                // display account details
+                var result = response.data;
+                G.player.id = result.PlayFabId;
+                G.levelsLoaded++;
 
-        const imageJump2 = new Image();
-        imageJump2.onload = function () {
-            G.textureJump2 = G.ctx.createPattern(this, "repeat");
-            const index = G.filesLoading.indexOf(this.src);
-            if (index > -1) {
-                G.filesLoading.splice(index, 1);
+                PlayFabClientSDK.GetUserData({}, (response, error) => {
+                    if (error) {
+                        console.log(error);
+                    }
+                    else {
+                        // display account details
+                        var result = response.data;
+                        if (result.Data.bestTimes === undefined) {
+                            G.bestTimes = {};
+                        } else {
+                            G.bestTimes = JSON.parse(result.Data.bestTimes.Value);
+                        }
+                        G.levelsLoaded++;
+                    }
+                });
             }
-            G.levelsLoaded++;
-        }
-        imageJump2.src = "textures/texture_jump_2.png";
-
-        const imageJump3 = new Image();
-        imageJump3.onload = function () {
-            G.textureJump3 = G.ctx.createPattern(this, "repeat");
-            const index = G.filesLoading.indexOf(this.src);
-            if (index > -1) {
-                G.filesLoading.splice(index, 1);
-            }
-            G.levelsLoaded++;
-        }
-        imageJump3.src = "textures/texture_jump_3.png";
-
-        const imageLava = new Image();
-        imageLava.onload = function () {
-            G.textureLava = G.ctx.createPattern(this, "repeat");
-            const index = G.filesLoading.indexOf(this.src);
-            if (index > -1) {
-                G.filesLoading.splice(index, 1);
-            }
-            G.levelsLoaded++;
-        }
-        imageLava.src = "textures/texture_lava.png";
-
-        const imageBounce = new Image();
-        imageBounce.onload = function () {
-            G.textureBounce = G.ctx.createPattern(this, "repeat");
-            const index = G.filesLoading.indexOf(this.src);
-            if (index > -1) {
-                G.filesLoading.splice(index, 1);
-            }
-            G.levelsLoaded++;
-        }
-        imageBounce.src = "textures/texture_bounce.png";
-
-        const imageBounceJump = new Image();
-        imageBounceJump.onload = function () {
-            G.textureBounceJump = G.ctx.createPattern(this, "repeat");
-            const index = G.filesLoading.indexOf(this.src);
-            if (index > -1) {
-                G.filesLoading.splice(index, 1);
-            }
-            G.levelsLoaded++;
-        }
-        imageBounceJump.src = "textures/texture_bounce_jump.png";
-
-        const imageBouncePad = new Image();
-        imageBouncePad.onload = function () {
-            G.textureBouncePad = G.ctx.createPattern(this, "repeat");
-            const index = G.filesLoading.indexOf(this.src);
-            if (index > -1) {
-                G.filesLoading.splice(index, 1);
-            }
-            G.levelsLoaded++;
-        }
-        imageBouncePad.src = "textures/texture_bounce_pad.png";
-
-        const imageBoost = new Image();
-        imageBoost.onload = function () {
-            G.textureBoost = G.ctx.createPattern(this, "repeat");
-            const index = G.filesLoading.indexOf(this.src);
-            if (index > -1) {
-                G.filesLoading.splice(index, 1);
-            }
-            G.levelsLoaded++;
-        }
-        imageBoost.src = "textures/texture_boost.png";
+        });
 
         //Load levels
+        G.levelCount += 1;
         let levels = await FetchFile("./levels.json?r=" + Math.random());
         G.levels = levels;
-        G.levelCount = 10;
         for (const pack of G.levels) G.levelCount += pack.levels.length - 1;
         const version = await FetchFile("./version.json?r=" + Math.random());
         G.version = version.version;
-        G.levelsLoaded += 1;
+        G.levelsLoaded++;
         for (let x = 0; x < G.levels.length; x++) {
             pack = G.levels[x];
             for (let y = 0; y < pack.levels.length; y++) {
@@ -367,7 +358,7 @@ async function FetchLevels() {
                 FetchLevel(level.file, x, y);
             }
         }
-        G.loadTicks = 0
+        G.loadTicks = 0;
         G.loadCheck = setInterval(function () {
             if (G.levelsLoaded == G.levelCount) {
                 loaded = true;
@@ -392,44 +383,254 @@ async function FetchLevels() {
             }
         }, 100);
     } catch (err) {
-        console.log(err.stack);
+        console.log(err);
         console.log("ERROR FROM FetchLevels");
     }
 }
 FetchLevels();
+G.binds = [
+    "left",
+    "right",
+    "jump",
+    "quit",
+    "retry"
+]
 //Detect key pressed
 document.addEventListener('keydown', function (event) {
     //If in menu
     if (G.scene == "m" && loaded) {
-        if (event.code == "Space") {
+        if (event.code == G.bindings.jump) {
+            //Submenu switcher
+            if (G.nav == 0) G.scene = "l";
+            if (G.nav == 1) {G.scene = "c"; G.nav = 0;}
+            if (G.nav == 3) {G.scene = "r"; G.nav = 0;}
+            if (G.nav == 4) {G.scene = "s"; G.nav = 0;}
+        }
+        if (event.code == G.bindings.right && !G.offline) G.nav = Math.min(G.nav + 1, 4);
+        else if (event.code == G.bindings.right && G.offline) G.nav = Math.min(G.nav + 1, 1);
+        if (event.code == G.bindings.left) G.nav = Math.max(G.nav - 1, 0);
+    } else if (G.scene == "l" && loaded) {
+        if (event.code == G.bindings.jump) {
             LoadLevel(G.levels[G.pack].levels[G.level].id);
             G.vy = 0;
             G.vx = 0;
             G.scene = "g";
         }
-        //Navigate menu
-        if (event.code == "ArrowRight") {
+        if (event.code == G.bindings.quit) G.scene = "m";
+        //Navigate level select
+        if (event.code == G.bindings.right) {
             if (G.pack < G.levels.length - 1) {
                 G.pack++;
             } else {
                 G.pack = 0;
             }
         }
-        if (event.code == "ArrowLeft") {
+        if (event.code == G.bindings.left) {
             if (G.pack > 0) {
                 G.pack--;
             } else {
                 G.pack = G.levels.length - 1;
             }
         }
+    } else if (G.scene == "c") {
+        if (event.code == G.bindings.quit) {G.scene = "m"; G.nav = 0;}
+        if (event.code == G.bindings.right) G.nav = Math.min(G.nav + 1, 4);
+        if (event.code == G.bindings.left) G.nav = Math.max(G.nav - 1, 0);
+        if (event.code == G.bindings.jump) {G.bind = G.nav; G.scene = "cr";}
+    } else if (G.scene == "cr") {
+        const key = event.code;
+        if (key == G.bindings[G.binds[G.bind]]) {G.scene = "c"; G.bind = -1; return;}
+        for (bind in G.bindings) if (key == G.bindings[bind]) {G.crerror = true; G.crcooldown = 200; return;}
+        G.bindings[G.binds[G.bind]] = key;
+        G.scene = "c";
+        G.bind = -1;
+        SaveBindings();
+    } else if (G.scene == "r") {
+        if (event.code == "Escape") {
+            G.nav--;
+            if (G.nav < 0) {
+                G.scene = "m";
+                G.nav = 0;
+                G.password = "";
+                G.username = "";
+                G.confirm = "";
+                G.email = "";
+                G.rerror = "";
+                return;
+            }
+        }
+        if (event.code == "Enter") {
+            G.nav++;
+            if (G.nav > 3) {
+                if (G.password != G.confirm) {
+                    G.rerror = "pnm";
+                    G.nav = 3;
+                    return;
+                }
+                if (G.username.length < 3 || G.username.length > 20) {
+                    G.rerror = "iun";
+                    G.nav = 3;
+                    return;
+                }
+                if (G.password.length < 6 || G.password.length > 50) {
+                    G.rerror = "ipw";
+                    G.nav = 3;
+                    return;
+                }
+                regReq = {};
+                regReq.Email = G.email;
+                regReq.Password = G.password;
+                regReq.Username = G.username;
+                PlayFabClientSDK.AddUsernamePassword(regReq, (response, error) => {
+                    if (error) {
+                        if (error.errorCode == 1011) {
+                            G.rerror = "aal";
+                            G.nav = 3;
+                            return;
+                        }
+                        if (error.errorCode == 1006) {
+                            G.rerror = "ena";
+                            G.nav = 3;
+                            return;
+                        }
+                        if (error.errorCode == 1005) {
+                            G.rerror = "iea";
+                            G.nav = 3;
+                            return;
+                        }
+                        if (error.errorCode == 1008) {
+                            G.rerror = "ipw";
+                            G.nav = 3;
+                            return;
+                        }
+                        if (error.errorCode == 1007) {
+                            G.rerror = "iun";
+                            G.nav = 3;
+                            return;
+                        }
+                        if (error.errorCode == 1009) {
+                            G.rerror = "una";
+                            G.nav = 3;
+                            return;
+                        }
+                    }
+                    else {
+                        G.scene = "m";
+                        G.nav = 0;
+                        G.password = "";
+                        G.username = "";
+                        G.confirm = "";
+                        G.email = "";
+                        G.rerror = "";
+                        G.signedin = true;
+                        window.localStorage.setItem("signedin", JSON.stringify(true));
+                        return;
+                    }
+                });
+            }
+        }
+        if (G.nav == 0) {
+            if (event.code == "Backspace") G.username = G.username.slice(0, -1);
+            if (!(G.regname.test(event.key))) return;
+            if (event.key.length != 1) return;
+            G.username += event.key;
+        }
+        else if (G.nav == 1) {
+            if (event.code == "Backspace") G.email = G.email.slice(0, -1);
+            if (!G.regmail.test(event.key)) return;
+            if (event.key.length != 1) return;
+            G.email += event.key;
+        }
+        else if (G.nav == 2) {
+            if (event.code == "Backspace") G.password = G.password.slice(0, -1);
+            if (!G.regpass.test(event.key)) return;
+            if (event.key.length != 1) return;
+            G.password += event.key;
+        }
+        else if (G.nav == 3) {
+            if (event.code == "Backspace") G.confirm = G.confirm.slice(0, -1);
+            if (!G.regpass.test(event.key)) return;
+            if (event.key.length != 1) return;
+            G.confirm += event.key;
+        }
     }
-    if (event.code == "ArrowLeft") {
+    //Sign In
+    else if (G.scene == "s") {
+        if (event.code == "Escape") {
+            G.nav--;
+            if (G.nav < 0) {
+                G.scene = "m";
+                G.nav = 0;
+                G.password = "";
+                G.username = "";
+                G.rerror = "";
+                return;
+            }
+        }
+        if (event.code == "Enter") {
+            G.nav++;
+            if (G.nav > 1) {
+                if (G.username.length < 3 || G.username.length > 20) {
+                    G.rerror = "iup";
+                    G.nav = 1;
+                    return;
+                }
+                if (G.password.length < 6 || G.password.length > 50) {
+                    G.rerror = "iup";
+                    G.nav = 1;
+                    return;
+                }
+                liReq = {};
+                liReq.Password = G.password;
+                liReq.Username = G.username;
+                liReq.TitleId = PlayFab.settings.titleId;
+                liReq.InfoRequestParameters = {
+                    GetUserAccountInfo: true
+                };
+                PlayFabClientSDK.LoginWithPlayFab(liReq, (response, error) => {
+                    if (error) {
+                        if (error.errorCode == 1003) {
+                            G.rerror = "iup";
+                            G.nav = 1;
+                            return;
+                        }
+                    }
+                    else {
+                        G.GUID = response.data.InfoResultPayload.AccountInfo.CustomIdInfo.CustomId;
+                        console.log(G.GUID);
+                        window.localStorage.setItem("guid", G.GUID);
+                        G.scene = "m";
+                        G.nav = 0;
+                        G.password = "";
+                        G.username = "";
+                        G.rerror = "";
+                        G.signedin = true;
+                        window.localStorage.setItem("signedin", JSON.stringify(true));
+                        return;
+                    }
+                });
+            }
+        }
+        if (G.nav == 0) {
+            if (event.code == "Backspace") G.username = G.username.slice(0, -1);
+            if (!(G.regname.test(event.key))) return;
+            if (event.key.length != 1) return;
+            G.username += event.key;
+        }
+        else if (G.nav == 1) {
+            if (event.code == "Backspace") G.password = G.password.slice(0, -1);
+            if (!G.regpass.test(event.key)) return;
+            if (event.key.length != 1) return;
+            G.password += event.key;
+        }
+    }
+    if (event.code == G.bindings.left) {
         G.keys.left = true;
     }
-    else if (event.code == "ArrowRight") {
+    else if (event.code == G.bindings.right) {
         G.keys.right = true;
     }
-    else if (event.code == "Space" && G.jumps > 0) {
+    else if (event.code == G.bindings.jump && G.jumps > 0) {
         jumpsound += 1;
         if (jumpsound > 2) {
             jumpsound = 0;
@@ -438,13 +639,13 @@ document.addEventListener('keydown', function (event) {
         G.character.vy = -6;
         G.jumps -= 1;
     }
-    else if (event.code == "Space" && G.scene == "e") {
+    else if (event.code == G.bindings.jump && G.scene == "e") {
         G.scene = "m";
         G.timer = 0;
         G.level = 0;
         G.record = false;
     }
-    else if (event.code == "KeyR" && G.scene == "g") {
+    else if (event.code == G.bindings.retry && G.scene == "g") {
         G.level = 0;
         G.timer = 0;
         G.objects = [];
@@ -454,7 +655,7 @@ document.addEventListener('keydown', function (event) {
         G.character.vx = 0;
         LoadLevel(G.levels[G.pack].levels[G.level].id);
     }
-    else if (event.code == "KeyQ" && G.scene == "g") {
+    else if (event.code == G.bindings.quit && G.scene == "g") {
         G.level = 0;
         G.timer = 0;
         G.objects = [];
@@ -462,13 +663,14 @@ document.addEventListener('keydown', function (event) {
         G.texts = [];
         G.scene = "m";
     }
+    for (const key in G.bindings) if (event.code == G.bindings[key]) event.preventDefault();
 });
 //Key up
 document.addEventListener('keyup', function (event) {
-    if (event.code == "ArrowLeft") {
+    if (event.code == G.bindings.left) {
         G.keys.left = false;
     }
-    else if (event.code == "ArrowRight") {
+    else if (event.code == G.bindings.right) {
         G.keys.right = false;
     }
 });
@@ -486,8 +688,10 @@ function Movement() {
     }
 }
 function Main() {
+    G.crcooldown--;
     //Increment timer
     if (G.playing) {
+        G.ac = G.timer;
         G.timer = parseFloat((G.timer + 0.02).toFixed(2));
     }
     //Create character collider where it would be next frame
@@ -552,14 +756,19 @@ function Main() {
                     if (G.bestTimes[G.levels[G.pack].id] == undefined) {
                         G.bestTimes[G.levels[G.pack].id] = G.timer;
                         G.record = true;
-                        window.localStorage.setItem("bestTimes", JSON.stringify(G.bestTimes));
-                    } else {
-                        if (G.timer < G.bestTimes[G.levels[G.pack].id]) {
-                            G.bestTimes[G.levels[G.pack].id] = G.timer;
-                            G.record = true;
-                            window.localStorage.setItem("bestTimes", JSON.stringify(G.bestTimes));
-                        }
+                    } else if (G.timer < G.bestTimes[G.levels[G.pack].id]) {
+                        G.bestTimes[G.levels[G.pack].id] = G.timer;
+                        G.record = true;
                     }
+                    var updateRequest = {
+                        Data: { bestTimes: JSON.stringify(G.bestTimes) },
+                        Permission: "public"
+                    }
+                    PlayFabClientSDK.UpdateUserData(updateRequest, (response, error) => {
+                        if (error) {
+                            console.log(error);
+                        }
+                    });
                 } else {
                     LoadLevel(G.levels[G.pack].levels[G.level].id);
                 }

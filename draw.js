@@ -1,3 +1,15 @@
+/*
+GAME STATES
+m: menu
+l: level select
+g: game
+e: end screen
+t: leaderboards
+c: settings
+cr: rebind controls
+r: register
+s: sign in
+*/
 G.colors = [
     "#444444", //0: Normal
     "#999933", //1: Jump
@@ -33,9 +45,9 @@ G.platformTexture = false;
 
 function Draw() {
 
-    //Draw Menu ('m')
+    //Draw Menu Screen ('m')
     if (G.scene == "m") {
-        //Title
+        //Clear Screen
         G.ctx.fillStyle = "#ffffff";
         G.ctx.fillRect(0, 0, 1200, 700);
         G.ctx.fillStyle = "black";
@@ -43,11 +55,9 @@ function Draw() {
         G.ctx.textAlign = "center";
         G.ctx.textBaseline = "middle";
         G.ctx.fillText("Just Another Platformer", 600, 200);
-        G.ctx.textBaseline = "bottom";
-        G.ctx.font = "24px 'Press Start 2P', sans-serif";
-        G.ctx.textAlign = "center";
         //Don't draw section if level data is not loaded
         if (!loaded) {
+            G.ctx.font = "24px 'Press Start 2P', sans-serif";
             G.ctx.textAlign = "center";
             G.ctx.textBaseline = "bottom";
             //Loading
@@ -62,16 +72,164 @@ function Draw() {
             G.ctx.textBaseline = "alphabetical";
             return;
         }
-        //Version Number
+        G.ctx.font = "32px 'Press Start 2P', sans-serif";
+        if (G.nav == 0) G.ctx.fillText("> Play <", 600, 350);
+        else G.ctx.fillText("Play", 600, 350);
+        G.ctx.font = "24px 'Press Start 2P', sans-serif";
+        if (G.nav == 2 && !G.offline) G.ctx.fillText("> Leaderboards <", 600, 500);
+        else if (!G.offline) G.ctx.fillText("Leaderboards", 600, 500)
+        if (G.nav == 1) G.ctx.fillText("> Settings <", 600, 450);
+        else G.ctx.fillText("Settings", 600, 450)
+        if (G.nav == 3 && !G.signedin && !G.offline) G.ctx.fillText("> Register <", 600, 550);
+        else if (!G.signedin && !G.offline) G.ctx.fillText("Register", 600, 550);
+        if (G.nav == 4 && !G.signedin && !G.offline) G.ctx.fillText("> Sign In <", 600, 600);
+        else if (!G.signedin && !G.offline) G.ctx.fillText("Sign In", 600, 600);
+        G.ctx.font = "16px 'Press Start 2P', sans-serif";
+        G.ctx.textAlign = "left";
+        G.ctx.fillText("Current Version: " + G.version, 10, 24);
         G.ctx.textAlign = "right";
-        G.ctx.fillText("Ver. " + G.version, 1190, 698);
-        //Control Hints
+        if (G.offline) G.ctx.fillText("OFFLINE MODE", 1190, 24);
         G.ctx.textAlign = "center";
-        G.ctx.fillText("Press JUMP to start", 600, 698);
+        G.ctx.fillText(
+            "Use " + G.bindings.left + ", " + G.bindings.right + ", and " + G.bindings.jump + " to navigate"
+            , 600, 685);
+    }
+
+    //Draw Settings Screen ('c', 'cr')
+    if (G.scene == "c" || G.scene == "cr") {
+        //Clear Screen
+        G.ctx.fillStyle = "#ffffff";
+        G.ctx.fillRect(0, 0, 1200, 700);
+        G.ctx.fillStyle = "black";
+        G.ctx.font = "40px 'Press Start 2P', sans-serif";
+        G.ctx.textAlign = "center";
+        G.ctx.textBaseline = "middle";
+        G.ctx.fillText("Settings", 600, 150);
+        G.ctx.font = "24px 'Press Start 2P', sans-serif";
+        if (G.bind == 0) G.ctx.fillStyle = "#44aaee";
+        else G.ctx.fillStyle = "black";
+        if (G.nav == 0) G.ctx.fillText("> Left: " + G.bindings.left + " <", 600, 250);
+        else G.ctx.fillText("Left: " + G.bindings.left, 600, 250);
+        if (G.bind == 1) G.ctx.fillStyle = "#44aaee";
+        else G.ctx.fillStyle = "black";
+        if (G.nav == 1) G.ctx.fillText("> Right: " + G.bindings.right + " <", 600, 300);
+        else G.ctx.fillText("Right: " + G.bindings.right, 600, 300);
+        if (G.bind == 2) G.ctx.fillStyle = "#44aaee";
+        else G.ctx.fillStyle = "black";
+        if (G.nav == 2) G.ctx.fillText("> Jump: " + G.bindings.jump + " <", 600, 350);
+        else G.ctx.fillText("Jump: " + G.bindings.jump, 600, 350);
+        if (G.bind == 3) G.ctx.fillStyle = "#44aaee";
+        else G.ctx.fillStyle = "black";
+        if (G.nav == 3) G.ctx.fillText("> Exit/Back: " + G.bindings.quit + " <", 600, 400);
+        else G.ctx.fillText("Exit/Back: " + G.bindings.quit, 600, 400);
+        if (G.bind == 4) G.ctx.fillStyle = "#44aaee";
+        else G.ctx.fillStyle = "black";
+        if (G.nav == 4) G.ctx.fillText("> Retry: " + G.bindings.retry + " <", 600, 450);
+        else G.ctx.fillText("Retry: " + G.bindings.retry, 600, 450);
+        G.ctx.fillStyle = "#dd4444";
+        if (G.crcooldown > 0) G.ctx.fillText("Key already bound to a different control", 600, 550);
+        G.ctx.fillStyle = "black";
+        G.ctx.font = "16px 'Press Start 2P', sans-serif";
+        G.ctx.textAlign = "right";
+        G.ctx.fillText("Current Version: " + G.version, 1190, 24);
+        G.ctx.textAlign = "center";
+        G.ctx.fillText(
+            "Use " + G.bindings.left + ", " + G.bindings.right + ", and " + G.bindings.jump + " to navigate"
+            , 600, 685);
+        G.ctx.textAlign = "left";
+        G.ctx.fillText("Use " + G.bindings.quit + " to go back", 10, 24);
+    }
+
+    //Draw Registration Screen ('r')
+    if (G.scene == "r") {
+        //Clear Screen
+        G.ctx.fillStyle = "#ffffff";
+        G.ctx.fillRect(0, 0, 1200, 700);
+        G.ctx.fillStyle = "black";
+        G.ctx.font = "40px 'Press Start 2P', sans-serif";
+        G.ctx.textAlign = "center";
+        G.ctx.textBaseline = "middle";
+        G.ctx.fillText("Register", 600, 150);
+        G.ctx.font = "16px 'Press Start 2P', sans-serif";
+        if (G.nav == 0) G.ctx.fillText(" > Username: " + G.username + " <", 600, 250);
+        else G.ctx.fillText("Username: " + G.username, 600, 250);
+        if (G.nav == 1) G.ctx.fillText(" > Email: " + G.email + " <", 600, 300);
+        else G.ctx.fillText("Email: " + G.email, 600, 300);
+        if (G.nav == 2) G.ctx.fillText(" > Password: " + G.password.replaceAll(/./g, "*") + " <", 600, 350);
+        else G.ctx.fillText("Password: " + G.password.replaceAll(/./g, "*"), 600, 350);
+        if (G.nav == 3) G.ctx.fillText(" > Confirm Password: " + G.confirm.replaceAll(/./g, "*") + " <", 600, 400);
+        else G.ctx.fillText("Confirm Password: " + G.confirm.replaceAll(/./g, "*"), 600, 400);
+        G.ctx.fillStyle = "#dd4444";
+        if (G.rerror == "una") G.ctx.fillText("Username already taken", 600, 450);
+        else if (G.rerror == "aal") G.ctx.fillText("Account already linked", 600, 450);
+        else if (G.rerror == "ena") G.ctx.fillText("Email already registered", 600, 450);
+        else if (G.rerror == "iea") G.ctx.fillText("Invalid email address", 600, 450);
+        else if (G.rerror == "iun") G.ctx.fillText("Invalid username", 600, 450);
+        else if (G.rerror == "ipw") G.ctx.fillText("Invalid password", 600, 450);
+        else if (G.rerror == "pnm") G.ctx.fillText("Passwords do not match", 600, 450);
+        G.ctx.fillStyle = "black";
+        G.ctx.fillText("Use Enter to proceed and Escape to go back", 600, 685);
+    }
+
+    //Draw Sign In Screen ('s')
+    if (G.scene == "s") {
+        //Clear Screen
+        G.ctx.fillStyle = "#ffffff";
+        G.ctx.fillRect(0, 0, 1200, 700);
+        G.ctx.fillStyle = "black";
+        G.ctx.font = "40px 'Press Start 2P', sans-serif";
+        G.ctx.textAlign = "center";
+        G.ctx.textBaseline = "middle";
+        G.ctx.fillText("Sign In", 600, 150);
+        G.ctx.font = "16px 'Press Start 2P', sans-serif";
+        if (G.nav == 0) G.ctx.fillText(" > Username: " + G.username + " <", 600, 350);
+        else G.ctx.fillText("Username: " + G.username, 600, 350);
+        if (G.nav == 1) G.ctx.fillText(" > Password: " + G.password.replaceAll(/./g, "*") + " <", 600, 400);
+        else G.ctx.fillText("Password: " + G.password.replaceAll(/./g, "*"), 600, 400);
+        G.ctx.fillStyle = "#dd4444";
+        if (G.rerror == "iup") G.ctx.fillText("Invalid username or password", 600, 450);
+        G.ctx.fillStyle = "black";
+        G.ctx.fillText("Use Enter to proceed and Escape to go back", 600, 685);
+    }
+
+    //Draw Leaderboards Screen ('t')
+    if (G.scene == "t") {
+        //Clear Screen
+        G.ctx.fillStyle = "#ffffff";
+        G.ctx.fillRect(0, 0, 1200, 700);
+        G.ctx.fillStyle = "black";
+        G.ctx.font = "40px 'Press Start 2P', sans-serif";
+        G.ctx.textAlign = "center";
+        G.ctx.textBaseline = "middle";
+        G.ctx.fillText("Leaderboards", 600, 150);
+        G.ctx.font = "24px 'Press Start 2P', sans-serif";
+        G.ctx.fillText("Not yet implemented lol", 600, 400);
+        G.ctx.font = "16px 'Press Start 2P', sans-serif";
+        G.ctx.textAlign = "center";
+        G.ctx.fillText(
+            "Use " + G.bindings.left + ", " + G.bindings.right + ", and " + G.bindings.jump + " to navigate"
+            , 600, 685);
+        G.ctx.textAlign = "left";
+        G.ctx.fillText("Use " + G.bindings.quit + " to go back", 10, 24);
+    }
+
+    //Draw Level Select ('l')
+    if (G.scene == "l") {
+        //Title
+        G.ctx.fillStyle = "#ffffff";
+        G.ctx.fillRect(0, 0, 1200, 700);
+        G.ctx.fillStyle = "black";
+        G.ctx.font = "40px 'Press Start 2P', sans-serif";
+        G.ctx.textAlign = "center";
+        G.ctx.textBaseline = "middle";
+        G.ctx.fillText("Level Select", 600, 200);
+        G.ctx.textBaseline = "bottom";
+        G.ctx.font = "24px 'Press Start 2P', sans-serif";
+        G.ctx.textAlign = "center";
         //Level Pack Name
         G.ctx.textBaseline = "middle";
         G.ctx.font = "32px 'Press Start 2P', sans-serif";
-        G.ctx.fillText("< " + G.levels[G.pack].name + " >", 600, 350);
+        G.ctx.fillText("> " + G.levels[G.pack].name + " <", 600, 350);
         //Level Pack Length
         G.ctx.font = "24px 'Press Start 2P', sans-serif";
         G.ctx.fillText((G.levels[G.pack].levels.length - 1) + " levels", 600, 400);
@@ -91,7 +249,14 @@ function Draw() {
         } else {
             G.ctx.fillText(G.bestTimes[G.levels[G.pack].id].toFixed(2) + "s", 600, 500);
         }
-    } 
+        G.ctx.font = "16px 'Press Start 2P', sans-serif";
+        G.ctx.textAlign = "center";
+        G.ctx.fillText(
+            "Use " + G.bindings.left + ", " + G.bindings.right + ", and " + G.bindings.jump + " to navigate"
+            , 600, 685);
+        G.ctx.textAlign = "left";
+        G.ctx.fillText("Use " + G.bindings.quit + " to go back", 10, 24);
+    }
 
     //Draw screen if currently in game
     if (G.scene == "g") {
@@ -102,8 +267,8 @@ function Draw() {
         G.ctx.fillStyle = "#000000";
         G.ctx.fillRect(600 - (G.character.width / 2), 350 - (G.character.height / 2), G.character.width, G.character.height);
         //Configure pattern offset
-        var translation = new DOMMatrix([1,0,0,1,0,0])
-                .translateSelf(G.offset.x, G.offset.y);
+        var translation = new DOMMatrix([1, 0, 0, 1, 0, 0])
+            .translateSelf(G.offset.x, G.offset.y);
         //Draw Platforms
         for (const platform of G.objects) {
             if (G.textureMap[platform.type] !== null) {
@@ -129,7 +294,7 @@ function Draw() {
                     G.ctx.fillStyle = `#${rval}33${bval}`;
                 }
             }
-            
+
             //Draw Platform Rect
             G.ctx.fillRect(platform.x + G.offset.x, platform.y + G.offset.y, platform.width, platform.height);
             if (G.platformTexture) {
@@ -182,7 +347,7 @@ function Draw() {
         G.ctx.fillText(G.levels[G.pack].name + " - " + G.levels[G.pack].levels[G.level].name + " - " + (G.level + 1) + "/" + (G.levels[G.pack].levels.length - 1), 1190, 20);
         G.ctx.textAlign = "left";
         G.ctx.textBaseline = "alphabetic"
-    } 
+    }
 
     //Draw end screen
     if (G.scene == "e") {

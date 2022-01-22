@@ -7,37 +7,37 @@
             {
                 "name": "Introduction",
                 "id": "tutorial1",
-                "file": "levels/tutorial/1.json"
+                "file": "assets/levels/tutorial/1.json"
             },
             {
                 "name": "You Can Jump!",
                 "id": "tutorial2",
-                "file": "levels/tutorial/2.json"
+                "file": "assets/levels/tutorial/2.json"
             },
             {
                 "name": "Jump Twice",
                 "id": "tutorial3",
-                "file": "levels/tutorial/3.json"
+                "file": "assets/levels/tutorial/3.json"
             },
             {
                 "name": "Jump Thrice",
                 "id": "tutorial4",
-                "file": "levels/tutorial/4.json"
+                "file": "assets/levels/tutorial/4.json"
             },
             {
                 "name": "Bouncy Blocks",
                 "id": "tutorial5",
-                "file": "levels/tutorial/5.json"
+                "file": "assets/levels/tutorial/5.json"
             },
             {
                 "name": "Bounce Jump Mania",
                 "id": "tutorial6",
-                "file": "levels/tutorial/6.json"
+                "file": "assets/levels/tutorial/6.json"
             },
             {
                 "name": "Putting it All Together",
                 "id": "tutorial7",
-                "file": "levels/tutorial/7.json"
+                "file": "assets/levels/tutorial/7.json"
             },
             {
                 "gg": true
@@ -52,42 +52,42 @@
             {
                 "name": "The First Trial",
                 "id": "first1",
-                "file": "levels/first/1.json"
+                "file": "assets/levels/first/1.json"
             },
             {
                 "name": "The Second Trial?",
                 "id": "first2",
-                "file": "levels/first/2.json"
+                "file": "assets/levels/first/2.json"
             },
             {
                 "name": "A Bunch of Bounces",
                 "id": "first3",
-                "file": "levels/first/3.json"
+                "file": "assets/levels/first/3.json"
             },
             {
                 "name": "A Bunch of Bounces (Pt. 2)",
                 "id": "first4",
-                "file": "levels/first/4.json"
+                "file": "assets/levels/first/4.json"
             },
             {
                 "name": "It's a small world",
                 "id": "first5",
-                "file": "levels/first/5.json"
+                "file": "assets/levels/first/5.json"
             },
             {
                 "name": "A quiet break",
                 "id": "first6",
-                "file": "levels/first/6.json"
+                "file": "assets/levels/first/6.json"
             },
             {
                 "name": "Back to the Action",
                 "id": "first7",
-                "file": "levels/first/7.json"
+                "file": "assets/levels/first/7.json"
             },
             {
                 "name": "This Looks Familliar",
                 "id": "first8",
-                "file": "levels/first/8.json"
+                "file": "assets/levels/first/8.json"
             },
             {
                 "gg": true
@@ -102,37 +102,37 @@
             {
                 "name": "Concept of Obstacles",
                 "id": "concepts1",
-                "file": "levels/concepts/1.json"
+                "file": "assets/levels/concepts/1.json"
             },
             {
                 "name": "Concept of Stairs",
                 "id": "concepts2",
-                "file": "levels/concepts/2.json"
+                "file": "assets/levels/concepts/2.json"
             },
             {
                 "name": "Concept of Small Platforms",
                 "id": "concepts3",
-                "file": "levels/concepts/3.json"
+                "file": "assets/levels/concepts/3.json"
             },
             {
                 "name": "Concept of Falling",
                 "id": "concepts4",
-                "file": "levels/concepts/4.json"
+                "file": "assets/levels/concepts/4.json"
             },
             {
                 "name": "Concept of Symmetry",
                 "id": "concepts5",
-                "file": "levels/concepts/5.json"
+                "file": "assets/levels/concepts/5.json"
             },
             {
                 "name": "Concept of Climbing",
                 "id": "concepts6",
-                "file": "levels/concepts/6.json"
+                "file": "assets/levels/concepts/6.json"
             },
             {
                 "name": "Concept of Trolling",
                 "id": "concepts7",
-                "file": "levels/concepts/7.json"
+                "file": "assets/levels/concepts/7.json"
             },
             {
                 "gg": true
@@ -147,27 +147,27 @@
             {
                 "name": "A Fork in the Road",
                 "id": "journey1",
-                "file": "levels/journey/1.json"
+                "file": "assets/levels/journey/1.json"
             },
             {
                 "name": "The Red Temple",
                 "id": "journey2",
-                "file": "levels/journey/2.json"
+                "file": "assets/levels/journey/2.json"
             },
             {
                 "name": "The Green Temple",
                 "id": "journey3",
-                "file": "levels/journey/3.json"
+                "file": "assets/levels/journey/3.json"
             },
             {
                 "name": "The Blue Temple",
                 "id": "journey4",
-                "file": "levels/journey/4.json"
+                "file": "assets/levels/journey/4.json"
             },
             {
                 "name": "The Yellow Temple",
                 "id": "journey5",
-                "file": "levels/journey/5.json"
+                "file": "assets/levels/journey/5.json"
             },
             {
                 "gg": true
@@ -182,22 +182,22 @@
             {
                 "name": "This is Precision",
                 "id": "torture1",
-                "file": "levels/torture/1.json"  
+                "file": "assets/levels/torture/1.json"  
             },
             {
                 "name": "Thread the Needle",
                 "id": "torture2",
-                "file": "levels/torture/2.json"
+                "file": "assets/levels/torture/2.json"
             },
             {
                 "name": "Going Down?",
                 "id": "torture3",
-                "file": "levels/torture/3.json"
+                "file": "assets/levels/torture/3.json"
             },
             {
                 "name": "World's Hardest Jump",
                 "id": "torture4",
-                "file": "levels/torture/4.json"
+                "file": "assets/levels/torture/4.json"
             },
             {
                 "gg": true
