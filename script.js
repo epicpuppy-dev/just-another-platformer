@@ -6,7 +6,7 @@ g: game
 e: end screen
 t: leaderboards*
 c: settings
-cr: rebind controls*
+cr: rebind controls
 r: register*
 s: sign in*
 */
@@ -39,6 +39,14 @@ G.crerror = false;
 G.crcooldown = 0;
 G.bind = -1;
 G.scene = "m";
+G.regname = /\w/;
+G.regpass = /\w|[!@#$%^&*+=]/;
+G.regmail = /\w|[!@#$%^&*+=.]/;
+G.password = "";
+G.username = "";
+G.confirm = "";
+G.email = "";
+G.rerror = "";
 G.nav = 0;
 G.signedin = false;
 G.ctx = canvas.getContext("2d");
@@ -395,6 +403,8 @@ document.addEventListener('keydown', function (event) {
             //Submenu switcher
             if (G.nav == 0) G.scene = "l";
             if (G.nav == 1) {G.scene = "c"; G.nav = 0;}
+            if (G.nav == 3) {G.scene = "r"; G.nav = 0;}
+            if (G.nav == 4) {G.scene = "s"; G.nav = 0;}
         }
         if (event.code == G.bindings.right && !G.offline) G.nav = Math.min(G.nav + 1, 4);
         else if (event.code == G.bindings.right && G.offline) G.nav = Math.min(G.nav + 1, 1);
@@ -435,6 +445,184 @@ document.addEventListener('keydown', function (event) {
         G.scene = "c";
         G.bind = -1;
         SaveBindings();
+    } else if (G.scene == "r") {
+        if (event.code == "Escape") {
+            G.nav--;
+            if (G.nav < 0) {
+                G.scene = "m";
+                G.nav = 0;
+                G.password = "";
+                G.username = "";
+                G.confirm = "";
+                G.email = "";
+                G.rerror = "";
+                return;
+            }
+        }
+        if (event.code == "Enter") {
+            G.nav++;
+            if (G.nav > 3) {
+                if (G.password != G.confirm) {
+                    G.rerror = "pnm";
+                    G.nav = 3;
+                    return;
+                }
+                if (G.username.length < 3 || G.username.length > 20) {
+                    G.rerror = "iun";
+                    G.nav = 3;
+                    return;
+                }
+                if (G.password.length < 6 || G.password.length > 50) {
+                    G.rerror = "ipw";
+                    G.nav = 3;
+                    return;
+                }
+                regReq = {};
+                regReq.Email = G.email;
+                regReq.Password = G.password;
+                regReq.Username = G.username;
+                PlayFabClientSDK.AddUsernamePassword(regReq, (response, error) => {
+                    if (error) {
+                        if (error.errorCode == 1011) {
+                            G.rerror = "aal";
+                            G.nav = 3;
+                            return;
+                        }
+                        if (error.errorCode == 1006) {
+                            G.rerror = "ena";
+                            G.nav = 3;
+                            return;
+                        }
+                        if (error.errorCode == 1005) {
+                            G.rerror = "iea";
+                            G.nav = 3;
+                            return;
+                        }
+                        if (error.errorCode == 1008) {
+                            G.rerror = "ipw";
+                            G.nav = 3;
+                            return;
+                        }
+                        if (error.errorCode == 1007) {
+                            G.rerror = "iun";
+                            G.nav = 3;
+                            return;
+                        }
+                        if (error.errorCode == 1009) {
+                            G.rerror = "una";
+                            G.nav = 3;
+                            return;
+                        }
+                    }
+                    else {
+                        G.scene = "m";
+                        G.nav = 0;
+                        G.password = "";
+                        G.username = "";
+                        G.confirm = "";
+                        G.email = "";
+                        G.rerror = "";
+                        G.signedin = true;
+                        window.localStorage.setItem("signedin", JSON.stringify(true));
+                        return;
+                    }
+                });
+            }
+        }
+        if (G.nav == 0) {
+            if (event.code == "Backspace") G.username = G.username.slice(0, -1);
+            if (!(G.regname.test(event.key))) return;
+            if (event.key.length != 1) return;
+            G.username += event.key;
+        }
+        else if (G.nav == 1) {
+            if (event.code == "Backspace") G.email = G.email.slice(0, -1);
+            if (!G.regmail.test(event.key)) return;
+            if (event.key.length != 1) return;
+            G.email += event.key;
+        }
+        else if (G.nav == 2) {
+            if (event.code == "Backspace") G.password = G.password.slice(0, -1);
+            if (!G.regpass.test(event.key)) return;
+            if (event.key.length != 1) return;
+            G.password += event.key;
+        }
+        else if (G.nav == 3) {
+            if (event.code == "Backspace") G.confirm = G.confirm.slice(0, -1);
+            if (!G.regpass.test(event.key)) return;
+            if (event.key.length != 1) return;
+            G.confirm += event.key;
+        }
+    }
+    //Sign In
+    else if (G.scene == "s") {
+        if (event.code == "Escape") {
+            G.nav--;
+            if (G.nav < 0) {
+                G.scene = "m";
+                G.nav = 0;
+                G.password = "";
+                G.username = "";
+                G.rerror = "";
+                return;
+            }
+        }
+        if (event.code == "Enter") {
+            G.nav++;
+            if (G.nav > 1) {
+                if (G.username.length < 3 || G.username.length > 20) {
+                    G.rerror = "iup";
+                    G.nav = 1;
+                    return;
+                }
+                if (G.password.length < 6 || G.password.length > 50) {
+                    G.rerror = "iup";
+                    G.nav = 1;
+                    return;
+                }
+                liReq = {};
+                liReq.Password = G.password;
+                liReq.Username = G.username;
+                liReq.TitleId = PlayFab.settings.titleId;
+                liReq.InfoRequestParameters = {
+                    GetUserAccountInfo: true
+                };
+                PlayFabClientSDK.LoginWithPlayFab(liReq, (response, error) => {
+                    if (error) {
+                        if (error.errorCode == 1003) {
+                            G.rerror = "iup";
+                            G.nav = 1;
+                            return;
+                        }
+                    }
+                    else {
+                        G.GUID = response.data.InfoResultPayload.AccountInfo.CustomIdInfo.CustomId;
+                        console.log(G.GUID);
+                        window.localStorage.setItem("guid", G.GUID);
+                        G.scene = "m";
+                        G.nav = 0;
+                        G.password = "";
+                        G.username = "";
+                        G.rerror = "";
+                        G.signedin = true;
+                        window.localStorage.setItem("signedin", JSON.stringify(true));
+                        return;
+                    }
+                });
+            }
+        }
+        if (G.nav == 0) {
+            if (event.code == "Backspace") G.username = G.username.slice(0, -1);
+            if (!(G.regname.test(event.key))) return;
+            if (event.key.length != 1) return;
+            G.username += event.key;
+        }
+        else if (G.nav == 1) {
+            if (event.code == "Backspace") G.password = G.password.slice(0, -1);
+            if (!G.regpass.test(event.key)) return;
+            if (event.key.length != 1) return;
+            G.password += event.key;
+        }
     }
     if (event.code == G.bindings.left) {
         G.keys.left = true;

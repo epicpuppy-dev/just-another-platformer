@@ -140,6 +140,79 @@ function Draw() {
         G.ctx.fillText("Use " + G.bindings.quit + " to go back", 10, 24);
     }
 
+    //Draw Registration Screen ('r')
+    if (G.scene == "r") {
+        //Clear Screen
+        G.ctx.fillStyle = "#ffffff";
+        G.ctx.fillRect(0, 0, 1200, 700);
+        G.ctx.fillStyle = "black";
+        G.ctx.font = "40px 'Press Start 2P', sans-serif";
+        G.ctx.textAlign = "center";
+        G.ctx.textBaseline = "middle";
+        G.ctx.fillText("Register", 600, 150);
+        G.ctx.font = "16px 'Press Start 2P', sans-serif";
+        if (G.nav == 0) G.ctx.fillText(" > Username: " + G.username + " <", 600, 250);
+        else G.ctx.fillText("Username: " + G.username, 600, 250);
+        if (G.nav == 1) G.ctx.fillText(" > Email: " + G.email + " <", 600, 300);
+        else G.ctx.fillText("Email: " + G.email, 600, 300);
+        if (G.nav == 2) G.ctx.fillText(" > Password: " + G.password.replaceAll(/./g, "*") + " <", 600, 350);
+        else G.ctx.fillText("Password: " + G.password.replaceAll(/./g, "*"), 600, 350);
+        if (G.nav == 3) G.ctx.fillText(" > Confirm Password: " + G.confirm.replaceAll(/./g, "*") + " <", 600, 400);
+        else G.ctx.fillText("Confirm Password: " + G.confirm.replaceAll(/./g, "*"), 600, 400);
+        G.ctx.fillStyle = "#dd4444";
+        if (G.rerror == "una") G.ctx.fillText("Username already taken", 600, 450);
+        else if (G.rerror == "aal") G.ctx.fillText("Account already linked", 600, 450);
+        else if (G.rerror == "ena") G.ctx.fillText("Email already registered", 600, 450);
+        else if (G.rerror == "iea") G.ctx.fillText("Invalid email address", 600, 450);
+        else if (G.rerror == "iun") G.ctx.fillText("Invalid username", 600, 450);
+        else if (G.rerror == "ipw") G.ctx.fillText("Invalid password", 600, 450);
+        else if (G.rerror == "pnm") G.ctx.fillText("Passwords do not match", 600, 450);
+        G.ctx.fillStyle = "black";
+        G.ctx.fillText("Use Enter to proceed and Escape to go back", 600, 685);
+    }
+
+    //Draw Sign In Screen ('s')
+    if (G.scene == "s") {
+        //Clear Screen
+        G.ctx.fillStyle = "#ffffff";
+        G.ctx.fillRect(0, 0, 1200, 700);
+        G.ctx.fillStyle = "black";
+        G.ctx.font = "40px 'Press Start 2P', sans-serif";
+        G.ctx.textAlign = "center";
+        G.ctx.textBaseline = "middle";
+        G.ctx.fillText("Sign In", 600, 150);
+        G.ctx.font = "16px 'Press Start 2P', sans-serif";
+        if (G.nav == 0) G.ctx.fillText(" > Username: " + G.username + " <", 600, 350);
+        else G.ctx.fillText("Username: " + G.username, 600, 350);
+        if (G.nav == 1) G.ctx.fillText(" > Password: " + G.password.replaceAll(/./g, "*") + " <", 600, 400);
+        else G.ctx.fillText("Password: " + G.password.replaceAll(/./g, "*"), 600, 400);
+        G.ctx.fillStyle = "#dd4444";
+        if (G.rerror == "iup") G.ctx.fillText("Invalid username or password", 600, 450);
+        G.ctx.fillStyle = "black";
+        G.ctx.fillText("Use Enter to proceed and Escape to go back", 600, 685);
+    }
+
+    //Draw Leaderboards Screen ('t')
+    if (G.scene == "t") {
+        //Clear Screen
+        G.ctx.fillStyle = "#ffffff";
+        G.ctx.fillRect(0, 0, 1200, 700);
+        G.ctx.fillStyle = "black";
+        G.ctx.font = "40px 'Press Start 2P', sans-serif";
+        G.ctx.textAlign = "center";
+        G.ctx.textBaseline = "middle";
+        G.ctx.fillText("Leaderboards", 600, 150);
+        G.ctx.font = "24px 'Press Start 2P', sans-serif";
+        G.ctx.fillText("Not yet implemented lol", 600, 400);
+        G.ctx.font = "16px 'Press Start 2P', sans-serif";
+        G.ctx.textAlign = "center";
+        G.ctx.fillText(
+            "Use " + G.bindings.left + ", " + G.bindings.right + ", and " + G.bindings.jump + " to navigate"
+            , 600, 685);
+        G.ctx.textAlign = "left";
+        G.ctx.fillText("Use " + G.bindings.quit + " to go back", 10, 24);
+    }
+
     //Draw Level Select ('l')
     if (G.scene == "l") {
         //Title
