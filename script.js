@@ -340,9 +340,11 @@ async function FetchLevels() {
         });
 
         //Load levels
-        G.levelCount += 1;
-        let levels = await FetchFile("./levels.json?r=" + Math.random());
+        G.levelCount += 2;
+        const levels = await FetchFile("./levels.json?r=" + Math.random());
         G.levels = levels;
+        G.badwords = await FetchFile("./assets/namefilter.txt?r=" + Math.random()).split("\n");
+        G.levelsLoaded++;
         for (const pack of G.levels) G.levelCount += pack.levels.length - 1;
         const version = await FetchFile("./version.json?r=" + Math.random());
         G.version = version.version;
@@ -476,6 +478,13 @@ document.addEventListener('keydown', function (event) {
                     G.rerror = "ipw";
                     G.nav = 3;
                     return;
+                }
+                for (const word of G.badwords) {
+                    if (G.username.toLowerCase().includes(word)) {
+                        G.rerror = "iun";
+                        G.nav = 3;
+                        return;
+                    }
                 }
                 regReq = {};
                 regReq.Email = G.email;
