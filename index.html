@@ -14,9 +14,14 @@
     <script src="https://download.playfab.com/PlayFabClientApi.js"></script>
   </head>
   <body>
-    <a href="https://github.com/EpicPuppy613/Just-Another-Platformer/releases">Changelog</a>
-    <canvas id="main" height="700" width="1200"></canvas>
-    <script src="script.js"></script>
-    <script src="draw.js"></script>
+    <canvas id="main"></canvas>
+    <script>
+        script = document.createElement('script');
+        script.src = 'script.js?r=' + Math.random();
+        draw = document.createElement('script');
+        draw.src = 'draw.js?r=' + Math.random();
+        document.querySelector('body').appendChild(script);
+        document.querySelector('body').appendChild(draw);
+    </script>
   </body>
 </html>

@@ -4,11 +4,12 @@ m: menu
 l: level select
 g: game
 e: end screen
+p: patch notes*
 t: leaderboards*
 c: settings
 cr: rebind controls
-r: register*
-s: sign in*
+r: register
+s: sign in
 */
 
 //Get canvas from html
@@ -35,6 +36,7 @@ G.playing = false;
 G.timer = 0;
 G.offline = false;
 G.ac = 0;
+G.updated = false;
 G.crerror = false;
 G.crcooldown = 0;
 G.bind = -1;
@@ -82,6 +84,28 @@ G.texts = [];
 PlayFab.settings.titleId = 68593;
 G.GUID = window.localStorage.getItem("guid");
 G.newUser = false;
+
+//get window size
+resize = null;
+G.width = window.innerWidth;
+G.height = window.innerHeight;
+G.xmid = Math.round(G.width / 2);
+G.ymid = Math.round(G.height / 2);
+canvas.width = G.width;
+canvas.height = G.height;
+//on window resize
+window.addEventListener('resize', function () {
+    canvas.style.display = "none";
+    clearTimeout(resize);
+    G.width = window.innerWidth;
+    G.height = window.innerHeight;
+    G.xmid = Math.round(G.width / 2);
+    G.ymid = Math.round(G.height / 2);
+    canvas.width = G.width;
+    canvas.height = G.height;
+    resize = setTimeout(function () {canvas.style.display = ""}, 250);
+});
+
 if (G.GUID === null) {
     G.GUID = crypto.randomUUID()
     window.localStorage.setItem("guid", G.GUID);
@@ -340,15 +364,18 @@ async function FetchLevels() {
         });
 
         //Load levels
-        G.levelCount += 2;
-        const levels = await FetchFile("./levels.json?r=" + Math.random());
-        G.levels = levels;
+        G.levelCount += 3;
+        G.levels = await FetchFile("./assets/levels.json?r=" + Math.random());
+        for (const pack of G.levels) G.levelCount += pack.levels.length - 1;
         G.badwords = await FetchFile("./assets/namefilter.json?r=" + Math.random());
         G.levelsLoaded++;
-        for (const pack of G.levels) G.levelCount += pack.levels.length - 1;
-        const version = await FetchFile("./version.json?r=" + Math.random());
+        G.notes = await FetchFile("./assets/changelog.json?r=" + Math.random());
+        G.levelsLoaded++;
+        const version = await FetchFile("./assets/version.json?r=" + Math.random());
         G.version = version.version;
         G.levelsLoaded++;
+        oldver = window.localStorage.getItem('version');
+        if (oldver != G.version) G.updated = true;
         for (let x = 0; x < G.levels.length; x++) {
             pack = G.levels[x];
             for (let y = 0; y < pack.levels.length; y++) {
@@ -405,11 +432,13 @@ document.addEventListener('keydown', function (event) {
             //Submenu switcher
             if (G.nav == 0) G.scene = "l";
             if (G.nav == 1) {G.scene = "c"; G.nav = 0;}
-            if (G.nav == 3) {G.scene = "r"; G.nav = 0;}
-            if (G.nav == 4) {G.scene = "s"; G.nav = 0;}
+            if (G.nav == 2) {G.scene = "p"; G.nav = 0; window.localStorage.setItem('version', G.version); G.updated = false;}
+            if (G.nav == 3) {G.scene = "t"; G.nav = 0;}
+            if (G.nav == 4) {G.scene = "r"; G.nav = 0;}
+            if (G.nav == 5) {G.scene = "s"; G.nav = 0;}
         }
-        if (event.code == G.bindings.right && !G.offline) G.nav = Math.min(G.nav + 1, 4);
-        else if (event.code == G.bindings.right && G.offline) G.nav = Math.min(G.nav + 1, 1);
+        if (event.code == G.bindings.right && !G.offline) G.nav = Math.min(G.nav + 1, 5);
+        else if (event.code == G.bindings.right && G.offline) G.nav = Math.min(G.nav + 1, 2);
         if (event.code == G.bindings.left) G.nav = Math.max(G.nav - 1, 0);
     } else if (G.scene == "l" && loaded) {
         if (event.code == G.bindings.jump) {
@@ -619,7 +648,7 @@ document.addEventListener('keydown', function (event) {
                     }
                 });
             }
-        }
+        } 
         if (G.nav == 0) {
             if (event.code == "Backspace") G.username = G.username.slice(0, -1);
             if (!(G.regname.test(event.key))) return;
@@ -632,6 +661,18 @@ document.addEventListener('keydown', function (event) {
             if (event.key.length != 1) return;
             G.password += event.key;
         }
+    } else if (G.scene == "t") {
+        if (event.code == G.bindings.quit) {
+            G.scene = "m";
+            G.nav = 0;
+        }
+    } else if (G.scene == "p") {
+        if (event.code == G.bindings.quit) {
+            G.scene = "m";
+            G.nav = 0;
+        }
+        if (event.code == G.bindings.left) G.nav = Math.max(G.nav - 1, 0);
+        if (event.code == G.bindings.right) G.nav = Math.min(G.nav + 1, G.notes.length - 1);
     }
     if (event.code == G.bindings.left) {
         G.keys.left = true;
@@ -700,7 +741,7 @@ function Main() {
     G.crcooldown--;
     //Increment timer
     if (G.playing) {
-        if (G.timer - G.ac != 0.02 && G.timer != 0) window.close();
+        //if (G.timer - G.ac != 0.02 && G.timer != 0) window.close();
         G.ac = G.timer;
         G.timer = parseFloat((G.timer + 0.02).toFixed(2));
     }
@@ -811,8 +852,8 @@ function Main() {
     G.character.y += G.character.vy;
     G.character.vy += 0.25;
     G.character.vy = Math.min(G.character.vy, G.terminal.y);
-    G.offset.x = Math.round(-G.character.x + 1200 / 2 - G.character.width / 2);
-    G.offset.y = Math.round(-G.character.y + 700 / 2 - G.character.height / 2);
+    G.offset.x = Math.round(-G.character.x + G.xmid - G.character.width / 2);
+    G.offset.y = Math.round(-G.character.y + G.ymid - G.character.height / 2);
     Draw();
 }
 const drawScreen = setInterval(function () {

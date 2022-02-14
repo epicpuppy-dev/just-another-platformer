@@ -1,0 +1,100 @@
+[
+    {
+        "version": "v0.8.3",
+        "notes": [
+            "The game is now fullscreen",
+            "Added patch notes feature"
+        ]
+    },
+    {
+        "version": "v0.8.1",
+        "notes": [
+            "Added inappropiate username filter"
+        ]
+    },
+    {
+        "version": "v0.8.0",
+        "notes": [
+            "New account system",
+            "Accounts store best times",
+            "Settings and keybinds",
+            "Leaderboards coming soon"
+        ]
+    },
+    {
+        "version": "v0.7.0",
+        "notes": [
+            "Added textures to blocks"
+        ]
+    },
+    {
+        "version": "v0.6.8",
+        "notes": [
+            "Code cleanup and performance changes"
+        ]
+    },
+    {
+        "version": "v0.6.7",
+        "notes": [
+            "Fixed momentum cancelling"
+        ]
+    },
+    {
+        "version": "v0.6.3",
+        "notes": [
+            "Physics improvements with boost block"
+        ]
+    },
+    {
+        "version": "v0.6.2",
+        "notes": [
+            "Changes to colors for the boost block"
+        ]
+    },
+    {
+        "version": "v0.6.0",
+        "notes": [
+            "New jump pad: boosts player upwards when touched",
+            "New boost block: modifies acceleration and max speed",
+            "Lowered difficulty for Journey",
+            "The first level of Journey is now less painful"
+        ]
+    },
+    {
+        "version": "v0.5.1",
+        "notes": [
+            "Renamed The First Trials to Trials"
+        ]
+    },
+    {
+        "version": "v0.5.0",
+        "notes": [
+            "New level pack: Journey, 5 levels",
+            "Physics and camera improvements"
+        ]
+    },
+    {
+        "version": "v0.4.2",
+        "notes": [
+            "Level 3 of Torture is a bit easier",
+            "Physics fix for air jumps"
+        ]
+    },
+    {
+        "version": "v0.4.0",
+        "notes": [
+            "New level pack: Concepts, 7 levels",
+            "Added reset hotkey",
+            "Added quit hotkey",
+            "New level editor"
+        ]
+    },
+    {
+        "version": "v0.3.0",
+        "notes": [
+            "New level pack: Torture, 4 levels",
+            "Vertical terminal velocity added",
+            "Loading optimizations"
+        ]
+    }
+]
