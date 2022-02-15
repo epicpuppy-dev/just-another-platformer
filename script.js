@@ -27,7 +27,9 @@ var jumpsound = 0;
 var loaded = false;
 
 //Define game
-G = {};
+if (typeof G == 'undefined') {
+    G = {};
+}
 G.levelCount = 0;
 G.record = false;
 G.pack = 0;

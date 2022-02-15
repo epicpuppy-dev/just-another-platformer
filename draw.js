@@ -10,6 +10,9 @@ cr: rebind controls
 r: register
 s: sign in
 */
+if (typeof G == 'undefined') {
+    G = {};
+}
 G.colors = [
     "#444444", //0: Normal
     "#999933", //1: Jump
@@ -279,7 +282,7 @@ function Draw() {
         if (G.bestTimes[G.levels[G.pack].id] == undefined) {
             G.ctx.fillText("None", G.xmid, G.ymid + 100);
         } else {
-            G.ctx.fillText(G.bestTimes[G.levels[G.pack].id].toFixed(2) + "s", G.xmid, G.ymid + 150);
+            G.ctx.fillText(G.bestTimes[G.levels[G.pack].id].toFixed(2) + "s", G.xmid, G.ymid + 100);
         }
         G.ctx.font = "16px 'Press Start 2P', sans-serif";
         G.ctx.textAlign = "center";

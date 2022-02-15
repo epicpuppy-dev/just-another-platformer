@@ -1,5 +1,11 @@
 [
     {
+        "version": "v0.8.4",
+        "notes": [
+            "Fixed bug with game not working"
+        ]
+    },
+    {
         "version": "v0.8.3",
         "notes": [
             "The game is now fullscreen",
