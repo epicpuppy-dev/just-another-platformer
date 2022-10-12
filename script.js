@@ -369,7 +369,7 @@ async function FetchLevels() {
         G.levelCount += 3;
         G.levels = await FetchFile("./assets/levels.json?r=" + Math.random());
         for (const pack of G.levels) G.levelCount += pack.levels.length - 1;
-        G.badwords = await FetchFile("./assets/namefilter.json?r=" + Math.random());
+        G.badwords = await FetchFile("./assets/namefilter.json");
         G.levelsLoaded++;
         G.notes = await FetchFile("./assets/changelog.json?r=" + Math.random());
         G.levelsLoaded++;
@@ -391,7 +391,7 @@ async function FetchLevels() {
         }
         G.loadTicks = 0;
         G.loadCheck = setInterval(function () {
-            if (G.levelsLoaded == G.levelCount) {
+            if (G.levelsLoaded >= G.levelCount) {
                 loaded = true;
                 G.textureMap = [
                     null, //0: Normal
